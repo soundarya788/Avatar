@@ -79,7 +79,7 @@ const [show,setShow]= React.useState(false)
          
             <center>
               <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images1.png"
+            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop.png"
             download
             onClick={() => download()}
           >
@@ -99,7 +99,7 @@ const [show,setShow]= React.useState(false)
             </button>
             <center>
               <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images2.png"
+            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop1.png"
             download
             onClick={() => download()}  
           >
@@ -138,7 +138,7 @@ const [show,setShow]= React.useState(false)
                 </button>
                 <center>
               <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images4.png"
+            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/images6.png"
             download
             onClick={() => download()}
           >
@@ -157,7 +157,7 @@ const [show,setShow]= React.useState(false)
                 </button>
                 <center>
               <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images5.png"
+            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop+4.png"
             download
             onClick={() => download()}
           >
@@ -176,7 +176,7 @@ const [show,setShow]= React.useState(false)
                 </button>
                 <center>
               <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images6.png"
+            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop+5.png"
             download
             onClick={() => download()}
           >
