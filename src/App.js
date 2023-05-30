@@ -1,25 +1,7 @@
 import React ,{useState} from 'react';
-import AWS from 'aws-sdk'
+
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
-
-
-const S3_BUCKET ='s3account-aws';
-const REGION ='ap-south-1';
-
-
-AWS.config.update({
-    accessKeyId: 'AKIAV27UBMIWJSSAXNOZ',
-    secretAccessKey: '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'
-})
-
-const myBucket = new AWS.S3({
-  params: { Bucket: S3_BUCKET},
-  region: REGION,
-})
-
-
-
 
 const img5="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+5.png";
 const img6="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+6.png";
@@ -50,32 +32,7 @@ const [displayImages, setDisplayImages] = React.useState({img5: false, img6: fal
 const [show,setShow]= React.useState(false)
 
 
-  const [progress , setProgress] = useState(0);
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileInput = (e) => {
-      setSelectedFile(e.target.files[0]);
-  }
-
-  const uploadFile = (file) => {
-
-    
-
-      const params = {
-          ACL: 'public-read',
-          Body: file,
-          Bucket: S3_BUCKET,
-          Key: file.name
-      };
-
-      myBucket.putObject(params)
-          .on('httpUploadProgress', (evt) => {
-              setProgress(Math.round((evt.loaded / evt.total) * 100))
-          })
-          .send((err) => {
-              if (err) console.log(err)
-          })
-  }
+  
 
     return (
       
@@ -94,7 +51,7 @@ const [show,setShow]= React.useState(false)
       
 <option value="vertical" >vertical</option>
 <option value="Horizontal" >Horizontal</option>
-<option value="tilt" >tilts</option>
+
 
 
 
@@ -119,6 +76,7 @@ const [show,setShow]= React.useState(false)
 
            
             </button>
+         
             <center>
               <a
             href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images1.png"
@@ -136,6 +94,8 @@ const [show,setShow]= React.useState(false)
             <Slide index={1}>
             <button onClick={()=>setDisplayImages({...displayImages, img6:true})} className="ground">
             <img src={img6}/>
+
+            
             </button>
             <center>
               <a
@@ -240,8 +200,9 @@ const [show,setShow]= React.useState(false)
                  <div className= "image">
                  
                   <div>
-              {displayImages.img5 &&  <img src={img5} class="center" alt="ground" />}
-              <button onClick={() => uploadFile(selectedFile)}> Upload to S3</button>
+              {displayImages.img5 &&  <img src={img5} class="center" alt="ground"/>}
+              
+            
               
               </div>
               <div>
@@ -263,6 +224,8 @@ const [show,setShow]= React.useState(false)
                 </div>
 
                 <div className="App">
+                <ButtonBack class="center2">Back</ButtonBack>
+        <ButtonNext class="center3">Next</ButtonNext>
 
          
         </div>
