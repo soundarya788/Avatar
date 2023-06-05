@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
-export default function App() {
+function App() {
   const [slides, setSlides] = useState([
     { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+9.png', show: false },
     { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+5.png', show: false },
@@ -98,7 +98,7 @@ export default function App() {
             <ButtonNext>Next</ButtonNext>
           </div>
         </div>
-      
+      </CarouselProvider>
 
       {mergedImage && (
         <div>
@@ -107,8 +107,8 @@ export default function App() {
           <button onClick={downloadMergedImage}>Download image</button>
         </div>
       )}
-      </CarouselProvider>
     </div>
-    
   );
 }
+
+export default App;
