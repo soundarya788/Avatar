@@ -98,7 +98,7 @@ export default function App() {
             <ButtonNext>Next</ButtonNext>
           </div>
         </div>
-      </CarouselProvider>
+      
 
       {mergedImage && (
         <div>
@@ -107,6 +107,8 @@ export default function App() {
           <button onClick={downloadMergedImage}>Download image</button>
         </div>
       )}
+      </CarouselProvider>
     </div>
+    
   );
 }
