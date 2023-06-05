@@ -104,7 +104,7 @@ export default function App() {
         <div>
           <h2>Merged Image:</h2>
           <img src={mergedImage} alt="Merged" />
-          <button onClick={downloadMergedImage}>Download Image</button>
+          <button onClick={downloadMergedImage}>Download image</button>
         </div>
       )}
     </div>
