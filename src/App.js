@@ -1,252 +1,112 @@
-import React ,{useState} from 'react';
-
+import React, { useState, useEffect } from 'react';
 import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
 import 'pure-react-carousel/dist/react-carousel.es.css';
 
-const img5="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+5.png";
-const img6="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+6.png";
-const img7="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+7.png";
-const img8="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+8.png";
-const img9="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+9.png";
-const img10="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+10.png";
+export default function App() {
+  const [slides, setSlides] = useState([
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+9.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+5.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+6.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+4.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+7.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+8.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+10.png', show: false },
+    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+11.png', show: false },
+  ]);
 
+  const [mergedImage, setMergedImage] = useState(null);
 
-const download = () => {
-    var element = document.createElement("a");
-    var file = new Blob(
-      
-      [
-        "https://s3account-aws.s3.ap-south-1.amazonaws.com/images1.jpg"
-      ],
-      { type: "image/*" }
-    );
-    element.href = URL.createObjectURL(file);
-    element.download = "image.jpg";
-    element.click();
+  const commonImage = 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+2.png';
+
+  const toggleSlide = (index) => {
+    setSlides((prevSlides) => {
+      const updatedSlides = [...prevSlides];
+      updatedSlides[index].show = !updatedSlides[index].show;
+      return updatedSlides;
+    });
   };
 
-  
+  useEffect(() => {
+    const mergeImages = async () => {
+      const selectedImages = slides.filter((slide) => slide.show);
+      if (selectedImages.length > 0) {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
 
-const Location = () => {
-const [displayImages, setDisplayImages] = React.useState({img5: false, img6: false, img7:false, img8:false, img9:false, img10:false});
-const [show,setShow]= React.useState(false)
+        const commonImg = await loadImage(commonImage);
+        const selectedImgs = await Promise.all(selectedImages.map((slide) => loadImage(slide.image)));
 
+        const mergedWidth = Math.max(commonImg.width, ...selectedImgs.map((img) => img.width));
+        const mergedHeight = commonImg.height + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
+        canvas.width = mergedWidth;
+        canvas.height = mergedHeight;
+        ctx.drawImage(commonImg, (mergedWidth - commonImg.width) / 2, 0);
 
-  
+        let offsetY = 90;
+        selectedImgs.forEach((img) => {
+          ctx.drawImage(img, (mergedWidth - img.width) / 2, offsetY);
+          offsetY += img.height;
+        });
 
-    return (
-      
+        const mergedImageUrl = canvas.toDataURL();
+        setMergedImage(mergedImageUrl);
+      } else {
+        setMergedImage(null);
+      }
+    };
 
-      
-        
+    mergeImages();
+  }, [slides]);
 
-      <CarouselProvider
-   naturalSlideWidth={100}
-   naturalSlideHeight={40}
-  totalSlides={8}
-  >
-     <p align="right" left="300px" >
+  const loadImage = (src) => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.src = src;
+      img.onload = () => resolve(img);
+    });
+  };
 
-<select id="Align">
-      
-<option value="vertical" >vertical</option>
-<option value="Horizontal" >Horizontal</option>
+  const downloadMergedImage = () => {
+    if (mergedImage) {
+      const link = document.createElement('a');
+      link.href = mergedImage;
+      link.download = 'merged_image.png';
+      link.click();
+    }
+  };
 
-
-
-
-</select>
-</p>
-
-
-
-      <img src="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+2.png" class="center1" />
-
-      
-                
-
-
-        <div>
-        <Slider>
-            <div className="Ccontainer">
-            <Slide index={0}>
-              
-            <button onClick={()=>setDisplayImages({...displayImages, img5:true})}  float="left">
-            <img src={img5}/>
-
-           
-            </button>
-         
-            <center>
-              <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop.png"
-            download
-            onClick={() => download()}
-          >
-            <button onClick={()=>setShow(!show)} class="btn">
-            <i className="fa fa-download" />
-            download
-            </button>
-          </a>
-          
-          </center>
-            </Slide>
-            <Slide index={1}>
-            <button onClick={()=>setDisplayImages({...displayImages, img6:true})} className="ground">
-            <img src={img6}/>
-
-            
-            </button>
-            <center>
-              <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop1.png"
-            download
-            onClick={() => download()}  
-          >
-            <button class="btn">
-            <i className="fa fa-download" />
-            download
-            </button>
-          </a>
-          
-          </center>
-            
-            </Slide>
-            <Slide index={2}>
-            
-                <button onClick={()=>setDisplayImages({...displayImages, img7:true})} className="ground">
-                <img src={img7}/>
+  return (
+    <div>
+      <CarouselProvider naturalSlideWidth={80} naturalSlideHeight={40} totalSlides={8}>
+        <div className="App">
+          <img src={commonImage} width="100px" className="center4" alt="Common" />
+          <Slider>
+            {slides.map((slide, index) => (
+              <Slide key={index} index={index}>
+                {slide.show && (
+                  <img src={slide.image} className="center1" alt={`Slide ${index}`} />
+                )}
+                <button onClick={() => toggleSlide(index)}>
+                  <img src={slide.image} width="200px" className="center" alt={`Slide ${index}`} />
                 </button>
-                <center>
-              <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/download+image/images3.png"
-            download
-            onClick={() => download()}
-          >
-            <button class="btn">
-            <i className="fa fa-download" />
-            download
-            </button>
-          </a>
-          </center>
-                </Slide>
-
-                <Slide index={3}>
-            
-                <button onClick={()=>setDisplayImages({...displayImages, img8:true})} className="ground">
-                <img src={img8}/>
-                </button>
-                <center>
-              <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/images6.png"
-            download
-            onClick={() => download()}
-          >
-            <button class="btn">
-            <i className="fa fa-download" />
-            download
-            </button>
-          </a>
-          </center>
-                </Slide>
-
-                <Slide index={4}>
-            
-                <button onClick={()=>setDisplayImages({...displayImages, img9:true})} className="ground">
-                <img src={img9}/>
-                </button>
-                <center>
-              <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop+4.png"
-            download
-            onClick={() => download()}
-          >
-            <button class="btn">
-            <i className="fa fa-download" />
-            download
-            </button>
-          </a>
-          </center>
-                </Slide>
-
-                <Slide index={5}>
-            
-                <button onClick={()=>setDisplayImages({...displayImages, img10:true})} className="ground">
-                <img src={img10}/>
-                </button>
-                <center>
-              <a
-            href="https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+crop+5.png"
-            download
-            onClick={() => download()}
-          >
-            <button class="btn">
-            <i className="fa fa-download" />
-            download
-            </button>
-          </a>
-          </center>
-                </Slide>
-                
-            </div>
-            </Slider> 
-           
-            
-
-
-            
-            
-            
-                 <div className= "image">
-                 
-                  <div>
-              {displayImages.img5 &&  <img src={img5} class="center" alt="ground"/>}
-              
-            
-              
-              </div>
-              <div>
-               {displayImages.img6 && <img src={img6} class="center" alt="first" />}
-               </div>
-               <div>
-               {displayImages.img7 && <img src = {img7 } class="center" alt= "second" />}
-               </div>
-               <div>
-               {displayImages.img8 && <img src={img8} class="center" alt="ground" />}
-               </div>
-               <div>
-               {displayImages.img9 && <img src={img9} class="center" alt="ground" />}
-               </div>
-               <div>
-               {displayImages.img10 && <img src={img10} class="center" alt="ground" />}
-               </div>
-                
-                </div>
-
-                <div className="App">
-                <ButtonBack class="center2">Back</ButtonBack>
-        <ButtonNext class="center3">Next</ButtonNext>
-
-         
+              </Slide>
+            ))}
+          </Slider>
+          <div className="center">
+            <ButtonBack>Back</ButtonBack>
+            <ButtonNext>Next</ButtonNext>
+          </div>
         </div>
+      </CarouselProvider>
 
-        
-       
-
-           
-        
-       
-
-                
-            
+      {mergedImage && (
+        <div>
+          <h2>Merged Image:</h2>
+          <img src={mergedImage} alt="Merged" />
+          <button onClick={downloadMergedImage}>Download Image</button>
+        </div>
+      )}
     </div>
-    
-    </CarouselProvider>
-
-
-
-    );
-};
-
-
-export default Location;
+  );
+}
