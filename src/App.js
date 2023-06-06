@@ -4,19 +4,17 @@ import 'pure-react-carousel/dist/react-carousel.es.css';
 
 export default function App() {
   const [slides, setSlides] = useState([
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+9.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+5.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+6.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+4.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+7.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+8.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+10.png', show: false },
-    { image: 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+11.png', show: false },
+    { image: '/images/image+6.png', show: false },
+    { image: '/images/image+5.png', show: false },
+    { image: '/images/image+11.png', show: false },
+    { image: '/images/image+4.png', show: false },
+    { image: '/images/image+7.png', show: false },
+    { image: '/images/image+8.png', show: false },
+    { image: '/images/image+10.png', show: false },
+  
   ]);
 
   const [mergedImage, setMergedImage] = useState(null);
-
-  const commonImage = 'https://s3account-aws.s3.ap-south-1.amazonaws.com/Avatar/image+2.png';
 
   const toggleSlide = (index) => {
     setSlides((prevSlides) => {
@@ -33,14 +31,24 @@ export default function App() {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
-        const commonImg = await loadImage(commonImage);
-        const selectedImgs = await Promise.all(selectedImages.map((slide) => loadImage(slide.image)));
+        const commonImage = new Image();
+        commonImage.src = '/images/image+2.png';
+        await commonImage.decode();
 
-        const mergedWidth = Math.max(commonImg.width, ...selectedImgs.map((img) => img.width));
-        const mergedHeight = commonImg.height + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
+        const selectedImgs = await Promise.all(selectedImages.map((slide) => {
+          const img = new Image();
+          img.src = slide.image;
+          return new Promise((resolve, reject) => {
+            img.onload = () => resolve(img);
+            img.onerror = (error) => reject(error);
+          });
+        }));
+
+        const mergedWidth = Math.max(commonImage.width, ...selectedImgs.map((img) => img.width));
+        const mergedHeight = commonImage.height + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
         canvas.width = mergedWidth;
         canvas.height = mergedHeight;
-        ctx.drawImage(commonImg, (mergedWidth - commonImg.width) / 2, 0);
+        ctx.drawImage(commonImage, (mergedWidth - commonImage.width) / 2, 0);
 
         let offsetY = 90;
         selectedImgs.forEach((img) => {
@@ -58,20 +66,11 @@ export default function App() {
     mergeImages();
   }, [slides]);
 
-  const loadImage = (src) => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = src;
-      img.onload = () => resolve(img);
-    });
-  };
-
   const downloadMergedImage = () => {
     if (mergedImage) {
       const link = document.createElement('a');
       link.href = mergedImage;
-      link.download = 'merged_image.png';
+      link.download = 'merged-image.png';
       link.click();
     }
   };
@@ -80,7 +79,7 @@ export default function App() {
     <div>
       <CarouselProvider naturalSlideWidth={80} naturalSlideHeight={40} totalSlides={8}>
         <div className="App">
-          <img src={commonImage} width="100px" className="center4" alt="Common" />
+          <img src="/images/image+2.png" width="100px" className="center4" alt="Common" />
           <Slider>
             {slides.map((slide, index) => (
               <Slide key={index} index={index}>
