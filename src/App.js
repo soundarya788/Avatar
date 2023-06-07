@@ -50,7 +50,7 @@ export default function App() {
         canvas.height = mergedHeight;
         ctx.drawImage(commonImage, (mergedWidth - commonImage.width) / 2, 0);
 
-        let offsetY = 90;
+        let offsetY = 75;
         selectedImgs.forEach((img) => {
           ctx.drawImage(img, (mergedWidth - img.width) / 2, offsetY);
           offsetY += img.height;
