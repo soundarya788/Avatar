@@ -11,6 +11,7 @@ export default function App() {
     { image: '/images/image+7.png', show: false },
     { image: '/images/image+8.png', show: false },
     { image: '/images/image+10.png', show: false },
+  
   ]);
 
   const [mergedImage, setMergedImage] = useState(null);
@@ -34,32 +35,20 @@ export default function App() {
         commonImage.src = '/images/image+2.png';
         await commonImage.decode();
 
-        const selectedImgs = await Promise.all(
-          selectedImages.map((slide) =>
-            new Promise((resolve, reject) => {
-              const img = new Image();
-              img.src = slide.image;
-              img.onload = () => resolve(img);
-              img.onerror = (error) => reject(error);
-            })
-          )
-        );
+        const selectedImgs = await Promise.all(selectedImages.map((slide) => {
+          const img = new Image();
+          img.src = slide.image;
+          return new Promise((resolve, reject) => {
+            img.onload = () => resolve(img);
+            img.onerror = (error) => reject(error);
+          });
+        }));
 
-        const mergedWidth = Math.max(
-          commonImage.width,
-          ...selectedImgs.map((img) => img.width)
-        );
-        const mergedHeight =
-          commonImage.height +
-          selectedImgs.reduce((sum, img) => sum + img.height, 0) +
-          300;
+        const mergedWidth = Math.max(commonImage.width, ...selectedImgs.map((img) => img.width));
+        const mergedHeight = commonImage.height + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
         canvas.width = mergedWidth;
         canvas.height = mergedHeight;
-        ctx.drawImage(
-          commonImage,
-          (mergedWidth - commonImage.width) / 2,
-          0
-        );
+        ctx.drawImage(commonImage, (mergedWidth - commonImage.width) / 2, 0);
 
         let offsetY = 75;
         selectedImgs.forEach((img) => {
@@ -95,10 +84,10 @@ export default function App() {
             {slides.map((slide, index) => (
               <Slide key={index} index={index}>
                 {slide.show && (
-                  <img src={process.env.PUBLIC_URL + slide.image} className="center1" alt={`Slide ${index}`} />
+                  <img src={slide.image} className="center1" alt={`Slide ${index}`} />
                 )}
                 <button onClick={() => toggleSlide(index)}>
-                  <img src={process.env.PUBLIC_URL + slide.image} width="200px" className="center" alt={`Slide ${index}`} />
+                  <img src={slide.image} width="200px" className="center" alt={`Slide ${index}`} />
                 </button>
               </Slide>
             ))}
