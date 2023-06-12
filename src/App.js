@@ -88,9 +88,10 @@ export default function App() {
   );
 
   return (
-    <div>
-      <div className="App">
-        <img src="/images/image+2.png" width="100px" className="center4" alt="Common" />
+    <div className="App">
+      
+      <div className="image-gallery-container">
+        <img src="/images/image+2.png" width="100px" alt="common" />
         <ImageGallery
           items={slides}
           showPlayButton={false}
@@ -125,12 +126,13 @@ export default function App() {
       </div>
 
       {mergedImage && (
-        <div>
-          
-          <canvas id="mergedCanvas" style={{ display: 'none' }}></canvas>
+        <div className="merged-image-container">
+          &nbsp;
+          <h1>merged image</h1>
+          <img src={mergedImage} className="merged-image" alt="Merged" />
           <div className="download-button-container">
             <button className="download-button" onClick={downloadMergedImage}>
-              merge image
+              Download Merged Image
             </button>
           </div>
         </div>
