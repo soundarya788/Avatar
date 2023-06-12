@@ -28,26 +28,34 @@ export default function App() {
         commonImage.src = '/images/image+2.png';
         await commonImage.decode();
 
-        const commonImageWidth = commonImage.width / 2; 
-        const commonImageHeight = commonImage.height / 2; 
+        const commonImageWidth = commonImage.width / 2;
+        const commonImageHeight = commonImage.height / 2;
 
-        const selectedImgs = await Promise.all(selectedImages.map((slide) => {
-          const img = new Image();
-          img.src = slide.original;
-          return new Promise((resolve, reject) => {
-            img.onload = () => resolve(img);
-            img.onerror = (error) => reject(error);
-          });
-        }));
+        const selectedImgs = await Promise.all(
+          selectedImages.map((slide) => {
+            const img = new Image();
+            img.src = slide.original;
+            return new Promise((resolve, reject) => {
+              img.onload = () => resolve(img);
+              img.onerror = (error) => reject(error);
+            });
+          })
+        );
 
         const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
-        const mergedHeight = commonImageHeight + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
+        const mergedHeight =
+          commonImageHeight + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
         canvas.width = mergedWidth;
         canvas.height = mergedHeight;
-        ctx.drawImage(commonImage, (mergedWidth - commonImageWidth) / 2, 0, commonImageWidth, commonImageHeight); 
+        ctx.drawImage(
+          commonImage,
+          (mergedWidth - commonImageWidth) / 2,
+          0,
+          commonImageWidth,
+          commonImageHeight
+        );
 
-        
-        let offsetY =  8; 
+        let offsetY = 8;
 
         selectedImgs.forEach((img) => {
           ctx.drawImage(img, (mergedWidth - img.width) / 2, offsetY);
@@ -118,9 +126,13 @@ export default function App() {
 
       {mergedImage && (
         <div>
-          <h2>Merged Image:</h2>
+          
           <canvas id="mergedCanvas" style={{ display: 'none' }}></canvas>
-          <button onClick={downloadMergedImage}>Download Image</button>
+          <div className="download-button-container">
+            <button className="download-button" onClick={downloadMergedImage}>
+              merge image
+            </button>
+          </div>
         </div>
       )}
     </div>
