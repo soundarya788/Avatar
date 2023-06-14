@@ -54,52 +54,21 @@ code {
   
  }
 
- .app-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
+ .download-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.image-gallery-container {
-  max-width: 600px;
-}
-
-.center4 {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.image-gallery-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.merged-image-container {
-  position: relative;
-  text-align: center;
-}
-
-.merged-image {
-  max-width: 100%;
-  height: auto;
+.download-button:hover {
+  background-color: #45a049;
 }
 
 .download-button-container {
-  margin-top: 20px;
-  text-align: right;
-  top:200px;
-  margin-bottom: 800px;
-  margin-right: 20px;
-}
-
-.download-button {
-  padding: 10px 20px;
-  background-color: #f44336;
-  color: #fff;
-  border: none;
-  cursor: pointer;
+  display: flex;
+  justify-content: center;
 }

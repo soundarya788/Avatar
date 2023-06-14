@@ -6,13 +6,15 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 
 export default function App() {
   const [slides, setSlides] = useState([
-    { original: '/images/image+6.png', thumbnail: '/images/image+6.png', show: false },
-    { original: '/images/image 5.png', thumbnail: '/images/image 5.png', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
+    { original: '/images/image+6.png', thumbnail: '/images/image+6.png', show: false },
+    { original: '/images/image+10.png', thumbnail: '/images/image+10.png', show: false },
+    
+    
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
     { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
-    { original: '/images/image+10.png', thumbnail: '/images/image+10.png', show: false },
+    
   ]);
 
   const [mergedImage, setMergedImage] = useState(null);
@@ -33,20 +35,29 @@ export default function App() {
 
         const selectedImgs = await Promise.all(
           selectedImages.map((slide) => {
-            const img = new Image();
-            img.src = slide.original;
             return new Promise((resolve, reject) => {
-              img.onload = () => resolve(img);
+              const img = new Image();
+              img.src = slide.original;
+              img.onload = () => resolve({ img, width: img.width, height: img.height });
               img.onerror = (error) => reject(error);
             });
           })
         );
 
+        const carouselImageHeight = 200; 
         const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
         const mergedHeight =
-          commonImageHeight + selectedImgs.reduce((sum, img) => sum + img.height, 0) + 300;
+          commonImageHeight + selectedImgs.length * carouselImageHeight + 100;
         canvas.width = mergedWidth;
         canvas.height = mergedHeight;
+
+        let offsetY = 0; 
+
+        selectedImgs.forEach(({ img, width, height }) => {
+          ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
+          offsetY += carouselImageHeight;
+        });
+
         ctx.drawImage(
           commonImage,
           (mergedWidth - commonImageWidth) / 2,
@@ -54,13 +65,6 @@ export default function App() {
           commonImageWidth,
           commonImageHeight
         );
-
-        let offsetY = 8;
-
-        selectedImgs.forEach((img) => {
-          ctx.drawImage(img, (mergedWidth - img.width) / 2, offsetY);
-          offsetY += img.height;
-        });
 
         const mergedImageUrl = canvas.toDataURL();
         setMergedImage(mergedImageUrl);
@@ -77,21 +81,48 @@ export default function App() {
       const link = document.createElement('a');
       link.href = mergedImage;
       link.download = 'merged-image.png';
-      link.click();
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const image = new Image();
+      image.src = mergedImage;
+
+      image.onload = () => {
+        canvas.width = 1080;
+        canvas.height = 1080;
+        ctx.drawImage(image, 0, 0, 1080, 1080);
+
+        canvas.toBlob((blob) => {
+          const blobUrl = URL.createObjectURL(blob);
+          link.href = blobUrl;
+          link.click();
+
+          URL.revokeObjectURL(blobUrl);
+        }, 'image/png');
+      };
     }
   };
 
   const customRenderItem = (item) => (
     <div className={`image-gallery-image${item.show ? ' show' : ''}`}>
-      <img src={item.original} alt={item.originalAlt} style={{ width: '200px' }} />
+      <div
+        className="carousel-image"
+        style={{
+          backgroundImage: `url(${item.original})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          width: '200px',
+          height: '200px', 
+        }}
+      />
     </div>
   );
 
   return (
     <div className="App">
-      
       <div className="image-gallery-container">
-        <img src="/images/image+2.png" width="100px" alt="common" />
+        <img src="/images/image+2.png" width="100px" alt="common" className="center" />
         <ImageGallery
           items={slides}
           showPlayButton={false}
@@ -115,7 +146,7 @@ export default function App() {
             </button>
           )}
           renderItem={customRenderItem}
-          onSlide={(currentIndex, _) => {
+          onSlide={(currentIndex) => {
             const updatedSlides = slides.map((slide, index) => ({
               ...slide,
               show: index === currentIndex,
@@ -126,14 +157,15 @@ export default function App() {
       </div>
 
       {mergedImage && (
-        <div className="merged-image-container">
-          &nbsp;
+        <div className="merged-image-container" style={{ textAlign: 'right' }}>
           <h1>merged image</h1>
-          <img src={mergedImage} className="merged-image" alt="Merged" />
-          <div className="download-button-container">
-            <button className="download-button" onClick={downloadMergedImage}>
-              Download Merged Image
-            </button>
+          <div className="merged-image-wrapper">
+            <img src={mergedImage} className="merged-image" alt="Merged" />
+            <div className="download-button-container">
+              <button className="download-button" onClick={downloadMergedImage}>
+                Download Merged Image
+              </button>
+            </div>
           </div>
         </div>
       )}
