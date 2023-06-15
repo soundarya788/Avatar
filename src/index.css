@@ -71,4 +71,26 @@ code {
 .download-button-container {
   display: flex;
   justify-content: center;
+  text-align: end;
 }
+.merged-image-container {
+  position: relative;
+  text-align: right;
+}
+
+.merged-image-wrapper {
+  position: absolute;
+  top: 100;
+  right: 0;
+  bottom: 40px;
+}
+.download-button-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+
+
+
