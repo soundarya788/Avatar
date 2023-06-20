@@ -164,10 +164,12 @@ export default function App() {
         
           <div className="merged-image-wrapper">
             <img src={mergedImage} className="merged-image" alt="Merged" />
-            <div className="download-button-container" >
-              <button className="download-button" onClick={downloadMergedImage} >
+            <div className="download-button-container" style={{ position: 'absolute', bottom: '-500px', left: '550px' }} >
+            
+            <button className="download-button" onClick={downloadMergedImage} >
                 Download Merged Image
               </button>
+              
             </div>
           </div>
         </div>

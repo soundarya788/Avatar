@@ -66,12 +66,14 @@ code {
 
 .download-button:hover {
   background-color: #45a049;
+  
 }
 
 .download-button-container {
   display: flex;
   justify-content: center;
   text-align: end;
+  
   
 }
 .merged-image-container {
@@ -88,8 +90,9 @@ code {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
+  
 }
 
 .image-gallery-image:nth-child(4) .carousel-image {
-  top: -200px; /* Adjust this value as per your requirement */
+  top: 200px; 
 }
