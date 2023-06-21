@@ -7,14 +7,12 @@ import 'react-image-gallery/styles/css/image-gallery.css';
 export default function App() {
   const [slides, setSlides] = useState([
     { original: '', thumbnail: '', show: false },
-
     { original: '/images/image+1.png', thumbnail: '/images/image+1.png', show: false },
-    { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show:false },
+    { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show: false },
     { original: '/images/image+3.png', thumbnail: '/images/image+3.png', show: false },
     { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
-    { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false},
+    { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
-
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
 
@@ -48,7 +46,7 @@ export default function App() {
         const carouselImageHeight = 200;
         const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
         const mergedHeight =
-          commonImageHeight + selectedImgs.length * carouselImageHeight + 100;
+          commonImageHeight + selectedImgs.length * carouselImageHeight + 300;
         canvas.width = mergedWidth;
         canvas.height = mergedHeight;
 
@@ -92,7 +90,7 @@ export default function App() {
       image.onload = () => {
         canvas.width = image.width;
         canvas.height = image.height;
-        ctx.drawImage(image, 0, 0, image.width, image.height+10);
+        ctx.drawImage(image, 0, 0, image.width, image.height + 10);
 
         canvas.toBlob((blob) => {
           const blobUrl = URL.createObjectURL(blob);
@@ -122,7 +120,7 @@ export default function App() {
   );
 
   return (
-    <div className="App">
+    <div className="App" style={{ width: '1080px', height: '1080px', margin: '0 auto' }}>
       <div className="image-gallery-container" style={{ height: '500px' }}>
         <img src="/images/image+2.png" width="100px" alt="common" className="center" />
         <ImageGallery
@@ -159,21 +157,23 @@ export default function App() {
       </div>
 
       {mergedImage && (
-        <div className="merged-image-container" style={{ textAlign: 'right', height: '500px', position: 'relative' }}>
-
-        
+        <div
+          className="merged-image-container"
+          style={{ textAlign: 'right', height: '300px', position: 'relative' }}
+        >
           <div className="merged-image-wrapper">
             <img src={mergedImage} className="merged-image" alt="Merged" />
-            <div className="download-button-container" style={{ position: 'absolute', bottom: '-500px', left: '550px' }} >
-            
-            <button className="download-button" onClick={downloadMergedImage} >
+            <div
+              className="download-button-container"
+              style={{ position: 'absolute', bottom: '-600px', left: '450px' }}
+            >
+              <button className="download-button" onClick={downloadMergedImage}>
                 Download merged Image
               </button>
-              
             </div>
           </div>
         </div>
       )}
     </div>
   );
-  }
+} 
