@@ -9,9 +9,9 @@ export default function App() {
     { original: '', thumbnail: '', show: false },
 
     { original: '/images/image+1.png', thumbnail: '/images/image+1.png', show: false },
-    { original: '/images/image+2.png', thumbnail: '/images/image+2.png', show:false },
+    { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show:false },
     { original: '/images/image+3.png', thumbnail: '/images/image+3.png', show: false },
-    { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show: false },
+    { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false},
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
 
