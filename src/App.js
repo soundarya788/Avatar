@@ -8,10 +8,10 @@ export default function App() {
   const [slides, setSlides] = useState([
     { original: '', thumbnail: '', show: false },
 
-    { original: '/images/image+21.png', thumbnail: '/images/image+21.png', show: false },
-    { original: '/images/image+22.png', thumbnail: '/images/image+22.png', show:false },
-    { original: '/images/image+23.png', thumbnail: '/images/image+23.png', show: false },
-    { original: '/images/image+25.png', thumbnail: '/images/image+25.png', show: false },
+    { original: '/images/image+1.png', thumbnail: '/images/image+1.png', show: false },
+    { original: '/images/image+2.png', thumbnail: '/images/image+2.png', show:false },
+    { original: '/images/image+3.png', thumbnail: '/images/image+3.png', show: false },
+    { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false},
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
 
