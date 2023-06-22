@@ -98,8 +98,11 @@ export default function App() {
           link.click();
 
           URL.revokeObjectURL(blobUrl);
-        }, 'image/png');
+        localStorage.setItem('mergedImage', mergedImage);
+        setMergedImage(null);
+      }, 'image/png');
       };
+       
     }
   };
 
@@ -159,13 +162,13 @@ export default function App() {
       {mergedImage && (
         <div
           className="merged-image-container"
-          style={{ textAlign: 'right', height: '300px', position: 'relative' }}
+          style={{ textAlign: 'right', height: '400px', position: 'relative' }}
         >
           <div className="merged-image-wrapper">
-            <img src={mergedImage} className="merged-image" alt="Merged" />
+            <img src={mergedImage} className="merged-image" alt="Merged" style={{ width: '200px' }} />
             <div
               className="download-button-container"
-              style={{ position: 'absolute', bottom: '-600px', left: '450px' }}
+              style={{ position: 'absolute', bottom: '-700px', left: '450px' }}
             >
               <button className="download-button" onClick={downloadMergedImage}>
                 Download merged Image
@@ -176,4 +179,4 @@ export default function App() {
       )}
     </div>
   );
-} 
+}
