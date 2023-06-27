@@ -101,21 +101,34 @@ export default function App() {
     });
   };
 
+  
+  
+  
   const handleShowCarousel = (carouselNumber, showCarousel) => {
     switch (carouselNumber) {
       case 1:
         setShowCarousel(showCarousel);
+        setShowCarousel2(false); // Hide the second carousel
+        setShowCarousel3(false); // Hide the third carousel
         break;
       case 2:
+        setShowCarousel(false); // Hide the first carousel
         setShowCarousel2(showCarousel);
+        setShowCarousel3(false); // Hide the third carousel
         break;
       case 3:
+        setShowCarousel(false); // Hide the first carousel
+        setShowCarousel2(false); // Hide the second carousel
         setShowCarousel3(showCarousel);
         break;
       default:
         break;
     }
   };
+  
+  
+  
+  
 
   const downloadMergedImage = () => {
     if (mergedImage) {
@@ -212,6 +225,7 @@ export default function App() {
               </button>
             )}
             renderItem={customRenderItem}
+            
             onSlide={(currentIndex) => {
               const updatedSlides = slides.map((slide, index) => ({
                 ...slide,
@@ -219,6 +233,7 @@ export default function App() {
               }));
               setSlides(updatedSlides);
             }}
+              
           />
         )}
         {showCarousel2 && (

@@ -110,4 +110,14 @@ code {
 .merged-image {
   width: 200px;
 }
+.image-gallery-container {
+  height: 500px;
+  left: -130px;
+}
+
+.image-gallery-container:nth-child(2) {
+  margin-top: 0; /* Remove marginTop style */
+  top: 0; /* Remove top style */
+}
+
 
