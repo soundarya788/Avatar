@@ -5,6 +5,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
 export default function App() {
+  const commonImageSrc = '/images/image+2.png'; 
+
   const [slides, setSlides] = useState([
     { original: '', thumbnail: '', show: false },
     { original: '/images/image+1.png', thumbnail: '/images/image+1.png', show: false },
@@ -16,64 +18,104 @@ export default function App() {
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
 
+  const [slides2, setSlides2] = useState([
+    { original: '', thumbnail: '', show: false },
+    { original: '/images/image+1.png', thumbnail: '/images/image+1.png', show: false },
+    { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show: false },
+    { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
+  ]);
+
+  const [slides3, setSlides3] = useState([
+    { original: '', thumbnail: '', show: false },
+    { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
+    { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
+    { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
+  ]);
+
   const [mergedImage, setMergedImage] = useState(null);
+
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [showCarousel2, setShowCarousel2] = useState(false);
+  const [showCarousel3, setShowCarousel3] = useState(false);
 
   useEffect(() => {
     const mergeImages = async () => {
-      const selectedImages = slides.filter((slide) => slide.show);
-      if (selectedImages.length > 0) {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
+      const selectedSlides = slides.filter((slide) => slide.show);
+      const selectedSlides2 = slides2.filter((slide) => slide.show);
+      const selectedSlides3 = slides3.filter((slide) => slide.show);
 
-        const commonImage = new Image();
-        commonImage.src = '/images/image+2.png';
-        await commonImage.decode();
+      const commonImage = new Image();
+      commonImage.src = commonImageSrc;
+      await commonImage.decode();
 
-        const commonImageWidth = commonImage.width / 2;
-        const commonImageHeight = commonImage.height / 2;
+      const commonImageWidth = commonImage.width / 2;
+      const commonImageHeight = commonImage.height / 2;
 
-        const selectedImgs = await Promise.all(
-          selectedImages.map((slide) => {
-            return new Promise((resolve, reject) => {
-              const img = new Image();
-              img.src = slide.original;
-              img.onload = () => resolve({ img, width: img.width, height: img.height });
-              img.onerror = (error) => reject(error);
-            });
-          })
-        );
+      const selectedImgs = await Promise.all([
+        ...selectedSlides.map((slide) => loadImage(slide.original)),
+        ...selectedSlides2.map((slide) => loadImage(slide.original)),
+        ...selectedSlides3.map((slide) => loadImage(slide.original)),
+      ]);
 
-        const carouselImageHeight = 200;
-        const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
-        const mergedHeight =
-          commonImageHeight + selectedImgs.length * carouselImageHeight + 300;
-        canvas.width = mergedWidth;
-        canvas.height = mergedHeight;
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
 
-        let offsetY = 40;
+      const carouselImageHeight = 200;
+      const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
+      const mergedHeight =
+        commonImageHeight +
+        (selectedSlides.length + selectedSlides2.length + selectedSlides3.length) *
+          carouselImageHeight +
+        300;
+      canvas.width = mergedWidth;
+      canvas.height = mergedHeight;
 
-        selectedImgs.forEach(({ img, width, height }) => {
-          ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
-          offsetY += 0;
-        });
+      let offsetY = 20;
 
-        ctx.drawImage(
-          commonImage,
-          (mergedWidth - commonImageWidth) / 2,
-          20,
-          commonImageWidth,
-          commonImageHeight
-        );
+      selectedImgs.forEach(({ img, width, height }) => {
+        ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
+        offsetY += carouselImageHeight;
+      });
 
-        const mergedImageUrl = canvas.toDataURL();
-        setMergedImage(mergedImageUrl);
-      } else {
-        setMergedImage(null);
-      }
+      ctx.drawImage(
+        commonImage,
+        (mergedWidth - commonImageWidth) / 2,
+        0,
+        commonImageWidth,
+        commonImageHeight
+      );
+
+      const mergedImageUrl = canvas.toDataURL();
+      setMergedImage(mergedImageUrl);
     };
 
     mergeImages();
-  }, [slides]);
+  }, [slides, slides2, slides3, commonImageSrc]);
+
+  const loadImage = (src) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => resolve({ img, width: img.width, height: img.height });
+      img.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleShowCarousel = (carouselNumber, showCarousel) => {
+    switch (carouselNumber) {
+      case 1:
+        setShowCarousel(showCarousel);
+        break;
+      case 2:
+        setShowCarousel2(showCarousel);
+        break;
+      case 3:
+        setShowCarousel3(showCarousel);
+        break;
+      default:
+        break;
+    }
+  };
 
   const downloadMergedImage = () => {
     if (mergedImage) {
@@ -98,11 +140,11 @@ export default function App() {
           link.click();
 
           URL.revokeObjectURL(blobUrl);
+        });
+
         localStorage.setItem('mergedImage', mergedImage);
         setMergedImage(null);
-      }, 'image/png');
       };
-       
     }
   };
 
@@ -117,6 +159,7 @@ export default function App() {
           width: '200px',
           height: '200px',
           margin: '0 auto',
+          
         }}
       />
     </div>
@@ -124,59 +167,156 @@ export default function App() {
 
   return (
     <div className="App" style={{ width: '1080px', height: '1080px', margin: '0 auto' }}>
-      <div className="image-gallery-container" style={{ height: '500px' }}>
-        <img src="/images/image+2.png" width="100px" alt="common" className="center" />
-        <ImageGallery
-          items={slides}
-          showPlayButton={false}
-          showFullscreenButton={false}
-          renderLeftNav={(onClick, disabled) => (
-            <button
-              className={`image-gallery-icon image-gallery-left-nav${disabled ? ' disabled' : ''}`}
-              disabled={disabled}
-              onClick={onClick}
-            >
-              <FaChevronLeft />
-            </button>
-          )}
-          renderRightNav={(onClick, disabled) => (
-            <button
-              className={`image-gallery-icon image-gallery-right-nav${disabled ? ' disabled' : ''}`}
-              disabled={disabled}
-              onClick={onClick}
-            >
-              <FaChevronRight />
-            </button>
-          )}
-          renderItem={customRenderItem}
-          onSlide={(currentIndex) => {
-            const updatedSlides = slides.map((slide, index) => ({
-              ...slide,
-              show: index === currentIndex,
-            }));
-            setSlides(updatedSlides);
-          }}
-        />
+      <div className="image-gallery-container" style={{ height: '500px' ,left:'-130px' }}>
+        <div className="carousel-button-group">
+          <button
+            className="carousel-button"
+            onClick={() => handleShowCarousel(1, !showCarousel)}
+          >
+            {showCarousel ? 'All images' : 'All images '}
+          </button>
+          <button
+            className="carousel-button"
+            onClick={() => handleShowCarousel(2, !showCarousel2)}
+          >
+            {showCarousel2 ? 'girls images' : 'girls images'}
+          </button>
+          <button
+            className="carousel-button"
+            onClick={() => handleShowCarousel(3, !showCarousel3)}
+          >
+            {showCarousel3 ? 'boys images' : 'boys images'}
+          </button>
+        </div>
+        {showCarousel && (
+          <ImageGallery
+            items={slides}
+            showPlayButton={false}
+            showFullscreenButton={false}
+            renderLeftNav={(onClick, disabled) => (
+              <button
+                className={`image-gallery-icon image-gallery-left-nav${disabled ? ' disabled' : ''}`}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                <FaChevronLeft />
+              </button>
+            )}
+            renderRightNav={(onClick, disabled) => (
+              <button
+                className={`image-gallery-icon image-gallery-right-nav${disabled ? ' disabled' : ''}`}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                <FaChevronRight />
+              </button>
+            )}
+            renderItem={customRenderItem}
+            onSlide={(currentIndex) => {
+              const updatedSlides = slides.map((slide, index) => ({
+                ...slide,
+                show: index === currentIndex,
+              }));
+              setSlides(updatedSlides);
+            }}
+          />
+        )}
+        {showCarousel2 && (
+          <ImageGallery
+            items={slides2}
+            showPlayButton={false}
+            showFullscreenButton={false}
+            renderLeftNav={(onClick, disabled) => (
+              <button
+                className={`image-gallery-icon image-gallery-left-nav${disabled ? ' disabled' : ''}`}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                <FaChevronLeft />
+              </button>
+            )}
+            renderRightNav={(onClick, disabled) => (
+              <button
+                className={`image-gallery-icon image-gallery-right-nav${disabled ? ' disabled' : ''}`}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                <FaChevronRight />
+              </button>
+            )}
+            renderItem={customRenderItem}
+            onSlide={(currentIndex) => {
+              const updatedSlides = slides2.map((slide, index) => ({
+                ...slide,
+                show: index === currentIndex,
+              }));
+              setSlides2(updatedSlides);
+            }}
+          />
+        )}
+        {showCarousel3 && (
+          <ImageGallery
+            items={slides3}
+            showPlayButton={false}
+            showFullscreenButton={false}
+            renderLeftNav={(onClick, disabled) => (
+              <button
+                className={`image-gallery-icon image-gallery-left-nav${disabled ? ' disabled' : ''}`}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                <FaChevronLeft />
+              </button>
+            )}
+            renderRightNav={(onClick, disabled) => (
+              <button
+                className={`image-gallery-icon image-gallery-right-nav${disabled ? ' disabled' : ''}`}
+                disabled={disabled}
+                onClick={onClick}
+              >
+                <FaChevronRight />
+              </button>
+            )}
+            renderItem={customRenderItem}
+            onSlide={(currentIndex) => {
+              const updatedSlides = slides3.map((slide, index) => ({
+                ...slide,
+                show: index === currentIndex,
+              }));
+              setSlides3(updatedSlides);
+            }}
+          />
+        )}
       </div>
 
-      {mergedImage && (
-        <div
-          className="merged-image-container"
-          style={{ textAlign: 'right', height: '400px', position: 'relative' }}
-        >
-          <div className="merged-image-wrapper">
-            <img src={mergedImage} className="merged-image" alt="Merged" style={{ width: '200px' }} />
-            <div
-              className="download-button-container"
-              style={{ position: 'absolute', bottom: '-700px', left: '450px' }}
-            >
-              <button className="download-button" onClick={downloadMergedImage}>
-                Download merged Image
-              </button>
-            </div>
+      <div style={{ marginTop: '-450px', top: '600px',textAlign:'right', marginRight: '-130px'}}>
+        {mergedImage && (
+          <div>
+            <img src={mergedImage} alt="Merged" width="200" />
           </div>
+        )}
+        <center>
+        <div style={{ height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <button onClick={downloadMergedImage}
+        style={{
+          backgroundColor: 'green',
+          color: 'white',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '4px',
+          fontSize: '16px',
+          cursor: 'pointer',
+          marginTop:'-800px',
+          
+          textAlign:'center'
+        }}
+        >
+          
+          Merge and Download</button>
         </div>
-      )}
+        </center>
+        
+      </div>
     </div>
   );
 }

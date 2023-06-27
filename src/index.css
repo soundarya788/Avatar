@@ -96,3 +96,18 @@ code {
 .image-gallery-image:nth-child(4) .carousel-image {
   top: 200px; 
 }
+
+.image-gallery-container {
+  position: relative;
+}
+
+.merged-image-container {
+  position: absolute;
+  top: 800px;
+  right: 20px;
+}
+
+.merged-image {
+  width: 200px;
+}
+
