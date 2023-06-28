@@ -316,7 +316,7 @@ export default function App() {
           </div>
         )}
         <center>
-        <div style={{ height: '10px',  marginTop:'-240px',right:'100px'}}>
+        <div style={{ height: '10px',position: 'absolute', marginTop:'-240px',right:'550px'}}>
         <button onClick={downloadMergedImage}
         style={{
           backgroundColor: 'green',
