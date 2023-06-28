@@ -130,9 +130,13 @@ code {
 }
 
 .carousel-button.active {
-  background-color: #4CAF50; /* Set the active button background color */
-  /* Add additional styles for the active button */
+  background-color: #4CAF50; 
 }
+
+.image-gallery-container {
+  position: relative;
+}
+
 
 
 

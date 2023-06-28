@@ -64,19 +64,21 @@ export default function App() {
       
 
       const carouselImageHeight = 90;
-      const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
+      const mergedWidth =  Math.floor(Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width)));
       const mergedHeight =
+      Math.floor(
         commonImageHeight +
-        (selectedSlides.length + selectedSlides2.length + selectedSlides3.length) *
-          carouselImageHeight +
-        300;
+          (selectedSlides.length + selectedSlides2.length + selectedSlides3.length) * carouselImageHeight +
+          300);
       canvas.width = mergedWidth;
       canvas.height = mergedHeight;
 
       let offsetY = 10;
 
       selectedImgs.forEach(({ img, width, height }) => {
-        ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
+        
+    
+    ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
         offsetY += carouselImageHeight;
       });
 
@@ -90,7 +92,7 @@ export default function App() {
       );
       
 
-      const mergedImageUrl = canvas.toDataURL();
+      const mergedImageUrl = canvas.toDataURL("image/png", 1);
       setMergedImage(mergedImageUrl);
     };
 
@@ -135,7 +137,8 @@ export default function App() {
   
   
 
-  const downloadMergedImage = () => {
+  const downloadMergedImage = (event) => {
+    event.preventDefault();
     if (mergedImage) {
       const link = document.createElement('a');
       link.href = mergedImage;
@@ -150,7 +153,7 @@ export default function App() {
       image.onload = () => {
         canvas.width = image.width;
         canvas.height = image.height;
-        ctx.drawImage(image, 0, 0, image.width, image.height + 10);
+        ctx.drawImage(image, 0, 160, image.width, image.height + 10);
 
         canvas.toBlob((blob) => {
           const blobUrl = URL.createObjectURL(blob);
@@ -184,8 +187,8 @@ export default function App() {
   );
 
   return (
-    <div className="App" style={{ width: '1080px', height: '1080px', margin: '0 auto' }}>
-      <div className="image-gallery-container" style={{ height: '500px' ,left:'-130px' }}>
+    <div className="App" style={{ width: '100%',  maxWidth: '1000px',height: '10vh', margin: '0 auto' }}>
+      <div className="image-gallery-container" style={{ height: '450px' ,left:'-130px' }}>
         <div className="carousel-button-group">
           <button
              className={`carousel-button${showCarousel ? ' active' : ''}`}
@@ -309,14 +312,14 @@ export default function App() {
         )}
       </div>
 
-      <div style={{ marginTop: '-450px', top: '600px',textAlign:'right', marginRight: '-130px'}}>
+      <div style={{ marginTop: '-420px', bottom:'-100px',top: '100px',textAlign:'right', marginRight: '-130px'}}>
         {mergedImage && (
           <div>
             <img src={mergedImage} alt="Merged" width="200" />
           </div>
         )}
         <center>
-        <div style={{ height: '10px',position: 'absolute', marginTop:'-240px',right:'550px'}}>
+        <div style={{ height: '100px',position:'absolute', marginTop:'-250px', marginBottom:'-10px',right:'-10px',  width: '100%'}}>
         <button onClick={downloadMergedImage}
         style={{
           backgroundColor: 'green',
@@ -326,7 +329,7 @@ export default function App() {
           borderRadius: '4px',
           fontSize: '16px',
           alignItems:'center',
-          display:'flex',
+          
           right:'-100px',
           
           
