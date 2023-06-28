@@ -116,8 +116,23 @@ code {
 }
 
 .image-gallery-container:nth-child(2) {
-  margin-top: 0; /* Remove marginTop style */
-  top: 0; /* Remove top style */
+  margin-top: 0; 
+  top: 0; 
 }
+.carousel-button {
+  background-color: #F44336; 
+  color: #FFFFFF; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 19px; 
+  font-size: 16px; 
+  
+}
+
+.carousel-button.active {
+  background-color: #4CAF50; /* Set the active button background color */
+  /* Add additional styles for the active button */
+}
+
 
 

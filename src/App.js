@@ -46,10 +46,11 @@ export default function App() {
 
       const commonImage = new Image();
       commonImage.src = commonImageSrc;
+     
       await commonImage.decode();
 
-      const commonImageWidth = commonImage.width / 2;
-      const commonImageHeight = commonImage.height / 2;
+      const commonImageWidth = commonImage.width ;
+      const commonImageHeight = commonImage.height ;
 
       const selectedImgs = await Promise.all([
         ...selectedSlides.map((slide) => loadImage(slide.original)),
@@ -59,8 +60,10 @@ export default function App() {
 
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false; 
+      
 
-      const carouselImageHeight = 200;
+      const carouselImageHeight = 90;
       const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
       const mergedHeight =
         commonImageHeight +
@@ -70,7 +73,7 @@ export default function App() {
       canvas.width = mergedWidth;
       canvas.height = mergedHeight;
 
-      let offsetY = 20;
+      let offsetY = 10;
 
       selectedImgs.forEach(({ img, width, height }) => {
         ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
@@ -79,11 +82,13 @@ export default function App() {
 
       ctx.drawImage(
         commonImage,
-        (mergedWidth - commonImageWidth) / 2,
+        (mergedWidth - 60)/2,
+         
         0,
-        commonImageWidth,
-        commonImageHeight
+        60, 
+        60 
       );
+      
 
       const mergedImageUrl = canvas.toDataURL();
       setMergedImage(mergedImageUrl);
@@ -108,17 +113,17 @@ export default function App() {
     switch (carouselNumber) {
       case 1:
         setShowCarousel(showCarousel);
-        setShowCarousel2(false); // Hide the second carousel
-        setShowCarousel3(false); // Hide the third carousel
+        setShowCarousel2(false); 
+        setShowCarousel3(false); 
         break;
       case 2:
-        setShowCarousel(false); // Hide the first carousel
+        setShowCarousel(false); 
         setShowCarousel2(showCarousel);
-        setShowCarousel3(false); // Hide the third carousel
+        setShowCarousel3(false); 
         break;
       case 3:
-        setShowCarousel(false); // Hide the first carousel
-        setShowCarousel2(false); // Hide the second carousel
+        setShowCarousel(false); 
+        setShowCarousel2(false); 
         setShowCarousel3(showCarousel);
         break;
       default:
@@ -183,19 +188,19 @@ export default function App() {
       <div className="image-gallery-container" style={{ height: '500px' ,left:'-130px' }}>
         <div className="carousel-button-group">
           <button
-            className="carousel-button"
+             className={`carousel-button${showCarousel ? ' active' : ''}`}
             onClick={() => handleShowCarousel(1, !showCarousel)}
           >
             {showCarousel ? 'All images' : 'All images '}
           </button>
           <button
-            className="carousel-button"
+             className={`carousel-button${showCarousel2 ? ' active' : ''}`}
             onClick={() => handleShowCarousel(2, !showCarousel2)}
           >
             {showCarousel2 ? 'girls images' : 'girls images'}
           </button>
           <button
-            className="carousel-button"
+             className={`carousel-button${showCarousel3 ? ' active' : ''}`}
             onClick={() => handleShowCarousel(3, !showCarousel3)}
           >
             {showCarousel3 ? 'boys images' : 'boys images'}
@@ -226,7 +231,7 @@ export default function App() {
             )}
             renderItem={customRenderItem}
             
-            onSlide={(currentIndex) => {
+            onSlide={(currentIndex,) => {
               const updatedSlides = slides.map((slide, index) => ({
                 ...slide,
                 show: index === currentIndex,
@@ -311,7 +316,7 @@ export default function App() {
           </div>
         )}
         <center>
-        <div style={{ height: '50px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <div style={{ height: '10px',  marginTop:'-240px',right:'100px'}}>
         <button onClick={downloadMergedImage}
         style={{
           backgroundColor: 'green',
@@ -320,10 +325,11 @@ export default function App() {
           border: 'none',
           borderRadius: '4px',
           fontSize: '16px',
-          cursor: 'pointer',
-          marginTop:'-800px',
+          alignItems:'center',
+          display:'flex',
+          right:'-100px',
           
-          textAlign:'center'
+          
         }}
         >
           
