@@ -15,7 +15,7 @@ export default function App() {
     { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
-    { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
+    { original: '/images/image+26.png', thumbnail: '/images/image+26.png', show: false },
   ]);
 
   const [slides2, setSlides2] = useState([
@@ -29,7 +29,7 @@ export default function App() {
     { original: '', thumbnail: '', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
-    { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
+    { original: '/images/image+26.png', thumbnail: '/images/image+26.png', show: false },
   ]);
 
   const [mergedImage, setMergedImage] = useState(null);
@@ -78,10 +78,9 @@ export default function App() {
       selectedImgs.forEach(({ img, width, height }) => {
         
     
-    ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
+        ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
         offsetY += carouselImageHeight;
       });
-
       ctx.drawImage(
         commonImage,
         (mergedWidth - 60)/2,
@@ -136,7 +135,6 @@ export default function App() {
   
   
   
-
   const downloadMergedImage = (event) => {
     event.preventDefault();
     if (mergedImage) {
@@ -144,16 +142,20 @@ export default function App() {
       link.href = mergedImage;
       link.download = 'merged-image.png';
 
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
+      
       const image = new Image();
       image.src = mergedImage;
 
       image.onload = () => {
-        canvas.width = image.width;
-        canvas.height = image.height;
-        ctx.drawImage(image, 0, 160, image.width, image.height + 10);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const targetWidth = 100; 
+        const targetHeight = (targetWidth / image.width) * image.height;
+
+        canvas.width = targetWidth+100;
+        canvas.height = targetHeight-70;
+
+        ctx.drawImage(image, 50, 110, targetWidth, targetHeight);
 
         canvas.toBlob((blob) => {
           const blobUrl = URL.createObjectURL(blob);
@@ -162,13 +164,18 @@ export default function App() {
 
           URL.revokeObjectURL(blobUrl);
         });
-
-        localStorage.setItem('mergedImage', mergedImage);
-        setMergedImage(null);
       };
     }
   };
 
+  
+     
+  
+       
+  
+
+  
+     
   const customRenderItem = (item) => (
     <div className={`image-gallery-image${item.show ? ' show' : ''}`}>
       <div
@@ -234,14 +241,25 @@ export default function App() {
             )}
             renderItem={customRenderItem}
             
-            onSlide={(currentIndex,) => {
-              const updatedSlides = slides.map((slide, index) => ({
-                ...slide,
-                show: index === currentIndex,
-              }));
-              setSlides(updatedSlides);
-            }}
+            
+           
+            onSlide={(currentIndex,event) => {
+                const updatedSlides = [...slides];
+                updatedSlides.forEach((slide, index) => {
+                  slide.show = index === currentIndex;
+                });
+                setSlides(updatedSlides);
+                
+              }}
               
+              
+              
+
+             
+              
+
+   
+  
           />
         )}
         {showCarousel2 && (
@@ -269,12 +287,12 @@ export default function App() {
             )}
             renderItem={customRenderItem}
             onSlide={(currentIndex) => {
-              const updatedSlides = slides2.map((slide, index) => ({
-                ...slide,
-                show: index === currentIndex,
-              }));
-              setSlides2(updatedSlides);
-            }}
+                const updatedSlides = [...slides2];
+                updatedSlides.forEach((slide, index) => {
+                  slide.show = index === currentIndex;
+                });
+                setSlides2(updatedSlides);
+              }}
           />
         )}
         {showCarousel3 && (
@@ -302,24 +320,27 @@ export default function App() {
             )}
             renderItem={customRenderItem}
             onSlide={(currentIndex) => {
-              const updatedSlides = slides3.map((slide, index) => ({
-                ...slide,
-                show: index === currentIndex,
-              }));
-              setSlides3(updatedSlides);
-            }}
+                const updatedSlides =  [...slides3];
+                updatedSlides.forEach ((slide, index) => {
+                  slide.show = index === currentIndex;
+                });
+                setSlides3(updatedSlides);
+              }}
+          
           />
         )}
       </div>
 
-      <div style={{ marginTop: '-420px', bottom:'-100px',top: '100px',textAlign:'right', marginRight: '-130px'}}>
+      <div style={{ marginTop: '-420px',top: '100px',textAlign:'right', marginRight: '-90px'}}>
+      
+
         {mergedImage && (
           <div>
             <img src={mergedImage} alt="Merged" width="200" />
           </div>
         )}
         <center>
-        <div style={{ height: '100px',position:'absolute', marginTop:'-250px', marginBottom:'-10px',right:'-10px',  width: '100%'}}>
+        <div style={{ height: '10px',  marginTop:'-250px', marginBottom:'-10px',right:'-10px'}}>
         <button onClick={downloadMergedImage}
         style={{
           backgroundColor: 'green',
@@ -330,6 +351,7 @@ export default function App() {
           fontSize: '16px',
           alignItems:'center',
           
+          
           right:'-100px',
           
           
@@ -338,9 +360,11 @@ export default function App() {
           
           Merge and Download</button>
         </div>
+        
         </center>
+        </div>
         
       </div>
-    </div>
+    
   );
-}
+} 
