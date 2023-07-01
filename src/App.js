@@ -15,7 +15,7 @@ export default function App() {
     { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
-    { original: '/images/image+26.png', thumbnail: '/images/image+26.png', show: false },
+    { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
 
   const [slides2, setSlides2] = useState([
@@ -29,7 +29,7 @@ export default function App() {
     { original: '', thumbnail: '', show: false },
     { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
-    { original: '/images/image+26.png', thumbnail: '/images/image+26.png', show: false },
+    { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
 
   const [mergedImage, setMergedImage] = useState(null);
