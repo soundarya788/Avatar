@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import ImageGallery from 'react-image-gallery';
+import ImageGallery from 'react-image-gallery'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
@@ -13,7 +13,7 @@ export default function App() {
     { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show: false },
     { original: '/images/image+3.png', thumbnail: '/images/image+3.png', show: false },
     { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
-    { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
+    { original: '/images/image 15.png', thumbnail: '/images/image 15.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
@@ -135,43 +135,46 @@ export default function App() {
   
   
   
+  
+
+     
   const downloadMergedImage = (event) => {
     event.preventDefault();
     if (mergedImage) {
       const link = document.createElement('a');
       link.href = mergedImage;
       link.download = 'merged-image.png';
-
-      
+  
       const image = new Image();
       image.src = mergedImage;
-
+  
       image.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-        const targetWidth = 100; 
-        const targetHeight = (targetWidth / image.width) * image.height;
-
-        canvas.width = targetWidth+100;
-        canvas.height = targetHeight-70;
-
-        ctx.drawImage(image, 50, 110, targetWidth, targetHeight);
-
+        const targetWidth = 180;
+        const targetHeight = 200; 
+  
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+  
+        const offsetX = (targetWidth - image.width)/2 ;
+        const offsetY = (targetHeight - image.height)/2;
+  
+        ctx.fillStyle = 'white'; 
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+        ctx.drawImage(image, offsetX, offsetY+190);
+  
         canvas.toBlob((blob) => {
           const blobUrl = URL.createObjectURL(blob);
           link.href = blobUrl;
           link.click();
-
+  
           URL.revokeObjectURL(blobUrl);
         });
       };
     }
   };
-
-  
-     
-  
-       
   
 
   
