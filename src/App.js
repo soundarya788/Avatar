@@ -13,7 +13,7 @@ export default function App() {
     { original: '/images/image+5.png', thumbnail: '/images/image+5.png', show: false },
     { original: '/images/image+3.png', thumbnail: '/images/image+3.png', show: false },
     { original: '/images/image+7.png', thumbnail: '/images/image+7.png', show: false },
-    { original: '/images/image 15.png', thumbnail: '/images/image 15.png', show: false },
+    { original: '/images/image+15.png', thumbnail: '/images/image+15.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
@@ -27,7 +27,7 @@ export default function App() {
 
   const [slides3, setSlides3] = useState([
     { original: '', thumbnail: '', show: false },
-    { original: '/images/image 15.png', thumbnail: '/images/image 15.png', show: false },
+    { original: '/images/image+15.png', thumbnail: '/images/image+15.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
@@ -49,8 +49,9 @@ export default function App() {
      
       await commonImage.decode();
 
-      const commonImageWidth = commonImage.width ;
-      const commonImageHeight = commonImage.height ;
+      const commonImageWidth = Math.floor(commonImage.width );
+const commonImageHeight = Math.floor(commonImage.height);
+
 
       const selectedImgs = await Promise.all([
         ...selectedSlides.map((slide) => loadImage(slide.original)),
@@ -62,6 +63,8 @@ export default function App() {
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = false; 
       
+      
+
 
       const carouselImageHeight = 60;
       const mergedWidth =  Math.floor(Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width)));
@@ -73,7 +76,7 @@ export default function App() {
       canvas.width = mergedWidth;
       canvas.height = mergedHeight;
 
-      let offsetY = 12;
+      let offsetY = 1;
 
       selectedImgs.forEach(({ img, width, height }) => {
         
@@ -83,11 +86,11 @@ export default function App() {
       });
       ctx.drawImage(
         commonImage,
-        (mergedWidth - 60)/2,
+        (mergedWidth - 50)/2,
          
         0,
-        60, 
-        60 
+        50, 
+        50,
       );
       
 
