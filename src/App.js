@@ -27,7 +27,7 @@ export default function App() {
 
   const [slides3, setSlides3] = useState([
     { original: '', thumbnail: '', show: false },
-    { original: '/images/image+11.png', thumbnail: '/images/image+11.png', show: false },
+    { original: '/images/image 15.png', thumbnail: '/images/image 15.png', show: false },
     { original: '/images/image+4.png', thumbnail: '/images/image+4.png', show: false },
     { original: '/images/image+8.png', thumbnail: '/images/image+8.png', show: false },
   ]);
@@ -63,7 +63,7 @@ export default function App() {
       ctx.imageSmoothingEnabled = false; 
       
 
-      const carouselImageHeight = 90;
+      const carouselImageHeight = 60;
       const mergedWidth =  Math.floor(Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width)));
       const mergedHeight =
       Math.floor(
@@ -73,7 +73,7 @@ export default function App() {
       canvas.width = mergedWidth;
       canvas.height = mergedHeight;
 
-      let offsetY = 10;
+      let offsetY = 12;
 
       selectedImgs.forEach(({ img, width, height }) => {
         
@@ -139,43 +139,43 @@ export default function App() {
 
      
   const downloadMergedImage = (event) => {
-    event.preventDefault();
-    if (mergedImage) {
-      const link = document.createElement('a');
-      link.href = mergedImage;
-      link.download = 'merged-image.png';
-  
-      const image = new Image();
-      image.src = mergedImage;
-  
-      image.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const targetWidth = 180;
-        const targetHeight = 200; 
-  
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
-  
-        const offsetX = (targetWidth - image.width)/2 ;
-        const offsetY = (targetHeight - image.height)/2;
-  
-        ctx.fillStyle = 'white'; 
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
-        ctx.drawImage(image, offsetX, offsetY+190);
-  
-        canvas.toBlob((blob) => {
-          const blobUrl = URL.createObjectURL(blob);
-          link.href = blobUrl;
-          link.click();
-  
-          URL.revokeObjectURL(blobUrl);
-        });
-      };
-    }
-  };
-  
+  event.preventDefault();
+  if (mergedImage) {
+    const link = document.createElement('a');
+    link.href = mergedImage;
+    link.download = 'merged-image.png';
+
+    const image = new Image();
+    image.src = mergedImage;
+
+    image.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const targetWidth = 1080;
+      const targetHeight = 1080;
+
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
+
+      const offsetX = (targetWidth - image.width) / 2;
+      const offsetY = (targetHeight - image.height) / 2;
+
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.drawImage(image, offsetX-80, offsetY+150, image.width+150, image.height+200);
+
+      canvas.toBlob((blob) => {
+        const blobUrl = URL.createObjectURL(blob);
+        link.href = blobUrl;
+        link.click();
+
+        URL.revokeObjectURL(blobUrl);
+      });
+    };
+  }
+};
+
 
   
      
