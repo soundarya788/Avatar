@@ -163,10 +163,10 @@ const commonImageHeight = Math.floor(commonImage.height);
       const offsetX = (targetWidth - image.width) / 2;
       const offsetY = (targetHeight - image.height) / 2;
 
-      ctx.fillStyle = '#080808';
-      ctx.fillRect(-10, 140, canvas.width-70, canvas.height-300);
+      ctx.fillStyle = 'white';
+      ctx.fillRect(-10, 140, canvas.width-70, canvas.height-280);
 
-      ctx.drawImage(image, offsetX-100, offsetY+100, image.width+160, image.height+700);
+      ctx.drawImage(image, offsetX-100, offsetY+100, image.width+140, image.height+680);
 
       canvas.toBlob((blob) => {
         const blobUrl = URL.createObjectURL(blob);
