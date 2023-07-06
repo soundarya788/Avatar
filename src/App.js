@@ -5,7 +5,20 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import 'react-image-gallery/styles/css/image-gallery.css';
 
 export default function App() {
-  const commonImageSrc = '/images/image+2.png'; 
+  const [commonImageSrc, setCommonImageSrc] = useState('/images/image+2.png');
+
+  const handleCommonImageChange = (e) => {
+    const file = e.target.files[0]; 
+    if(file) { 
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCommonImageSrc(e.target.result); 
+      }
+      reader.readAsDataURL(file); 
+    }
+  }
+
+ 
 
   const [slides, setSlides] = useState([
     { original: '', thumbnail: '', show: false },
@@ -151,7 +164,7 @@ const commonImageHeight = Math.floor(commonImage.height);
     const image = new Image();
     image.src = mergedImage;
 
-    image.onload = () => {
+    image.onload = async () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       const targetWidth = 1080;
@@ -201,6 +214,12 @@ const commonImageHeight = Math.floor(commonImage.height);
   );
 
   return (
+
+    
+
+    
+		
+
     <div className="App" style={{ width: '100%',  maxWidth: '1000px',height: '10vh', margin: '0 auto' }}>
       <div className="image-gallery-container" style={{ height: '450px' ,left:'-130px' }}>
         <div className="carousel-button-group">
@@ -365,13 +384,26 @@ const commonImageHeight = Math.floor(commonImage.height);
         }}
         >
           
+          
           Merge and Download</button>
         </div>
         
         </center>
+        <input 
+    type="file" 
+    style={{ 
+      position: 'absolute',
+      top: 50,  
+      left: 50,     
+      zIndex: 1  
+    }}  
+    accept="image/*"
+    onChange={handleCommonImageChange}
+  />   
         </div>
         
       </div>
+    
     
   );
 } 
