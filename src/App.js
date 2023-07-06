@@ -163,14 +163,15 @@ const commonImageHeight = Math.floor(commonImage.height);
       const offsetX = (targetWidth - image.width) / 2;
       const offsetY = (targetHeight - image.height) / 2;
 
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#080808';
+      ctx.fillRect(-10, 140, canvas.width-70, canvas.height-300);
 
-      ctx.drawImage(image, offsetX-80, offsetY+150, image.width+150, image.height+200);
+      ctx.drawImage(image, offsetX-100, offsetY+100, image.width+160, image.height+700);
 
       canvas.toBlob((blob) => {
         const blobUrl = URL.createObjectURL(blob);
         link.href = blobUrl;
+        link.download = 'merged-image-1080.png';
         link.click();
 
         URL.revokeObjectURL(blobUrl);
