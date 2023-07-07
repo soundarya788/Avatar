@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import ImageGallery from 'react-image-gallery'
+import axios from 'axios';
+import ImageGallery from 'react-image-gallery';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 import 'react-image-gallery/styles/css/image-gallery.css';
 
 export default function App() {
   const [commonImageSrc, setCommonImageSrc] = useState('/images/image+2.png');
+  const [selectedImage] = useState(null); 
+  const [cartoonImage, setCartoonImage] = useState(null);
 
   const handleCommonImageChange = (e) => {
-    const file = e.target.files[0]; 
-    if(file) { 
+    const file = e.target.files[0];
+    if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setCommonImageSrc(e.target.result); 
-      }
-      reader.readAsDataURL(file); 
+        setCommonImageSrc(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
-
- 
+  };
 
   const [slides, setSlides] = useState([
     { original: '', thumbnail: '', show: false },
@@ -59,12 +60,11 @@ export default function App() {
 
       const commonImage = new Image();
       commonImage.src = commonImageSrc;
-     
+
       await commonImage.decode();
 
-      const commonImageWidth = Math.floor(commonImage.width );
-const commonImageHeight = Math.floor(commonImage.height);
-
+      const commonImageWidth = Math.floor(commonImage.width);
+      const commonImageHeight = Math.floor(commonImage.height);
 
       const selectedImgs = await Promise.all([
         ...selectedSlides.map((slide) => loadImage(slide.original)),
@@ -74,40 +74,28 @@ const commonImageHeight = Math.floor(commonImage.height);
 
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false; 
-      
-      
-
+      ctx.imageSmoothingEnabled = false;
 
       const carouselImageHeight = 60;
-      const mergedWidth =  Math.floor(Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width)));
+      const mergedWidth = Math.floor(Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width)));
       const mergedHeight =
-      Math.floor(
-        commonImageHeight +
+        Math.floor(
+          commonImageHeight +
           (selectedSlides.length + selectedSlides2.length + selectedSlides3.length) * carouselImageHeight +
-          300);
+          300
+        );
       canvas.width = mergedWidth;
       canvas.height = mergedHeight;
 
       let offsetY = 1;
 
       selectedImgs.forEach(({ img, width, height }) => {
-        
-    
         ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
         offsetY += carouselImageHeight;
       });
-      ctx.drawImage(
-        commonImage,
-        (mergedWidth - 50)/2,
-         
-        0,
-        50, 
-        50,
-      );
-      
+      ctx.drawImage(commonImage, (mergedWidth - 50) / 2, 0, 50, 50);
 
-      const mergedImageUrl = canvas.toDataURL("image/png", 1);
+      const mergedImageUrl = canvas.toDataURL('image/png', 1);
       setMergedImage(mergedImageUrl);
     };
 
@@ -123,79 +111,67 @@ const commonImageHeight = Math.floor(commonImage.height);
     });
   };
 
-  
-  
-  
   const handleShowCarousel = (carouselNumber, showCarousel) => {
     switch (carouselNumber) {
       case 1:
         setShowCarousel(showCarousel);
-        setShowCarousel2(false); 
-        setShowCarousel3(false); 
+        setShowCarousel2(false);
+        setShowCarousel3(false);
         break;
       case 2:
-        setShowCarousel(false); 
+        setShowCarousel(false);
         setShowCarousel2(showCarousel);
-        setShowCarousel3(false); 
+        setShowCarousel3(false);
         break;
       case 3:
-        setShowCarousel(false); 
-        setShowCarousel2(false); 
+        setShowCarousel(false);
+        setShowCarousel2(false);
         setShowCarousel3(showCarousel);
         break;
       default:
         break;
     }
   };
-  
-  
-  
-  
-  
 
-     
   const downloadMergedImage = (event) => {
-  event.preventDefault();
-  if (mergedImage) {
-    const link = document.createElement('a');
-    link.href = mergedImage;
-    link.download = 'merged-image.png';
+    event.preventDefault();
+    if (mergedImage) {
+      const link = document.createElement('a');
+      link.href = mergedImage;
+      link.download = 'merged-image.png';
 
-    const image = new Image();
-    image.src = mergedImage;
+      const image = new Image();
+      image.src = mergedImage;
 
-    image.onload = async () => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const targetWidth = 1080;
-      const targetHeight = 1080;
+      image.onload = async () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const targetWidth = 1080;
+        const targetHeight = 1080;
 
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
 
-      const offsetX = (targetWidth - image.width) / 2;
-      const offsetY = (targetHeight - image.height) / 2;
+        const offsetX = (targetWidth - image.width) / 2;
+        const offsetY = (targetHeight - image.height) / 2;
 
-      ctx.fillStyle = 'white';
-      ctx.fillRect(-10, 140, canvas.width-70, canvas.height-280);
+        ctx.fillStyle = 'white';
+        ctx.fillRect(-10, 140, canvas.width - 70, canvas.height - 280);
 
-      ctx.drawImage(image, offsetX-100, offsetY+100, image.width+140, image.height+680);
+        ctx.drawImage(image, offsetX - 100, offsetY + 100, image.width + 140, image.height + 680);
 
-      canvas.toBlob((blob) => {
-        const blobUrl = URL.createObjectURL(blob);
-        link.href = blobUrl;
-        link.download = 'merged-image-1080.png';
-        link.click();
+        canvas.toBlob((blob) => {
+          const blobUrl = URL.createObjectURL(blob);
+          link.href = blobUrl;
+          link.download = 'merged-image-1080.png';
+          link.click();
 
-        URL.revokeObjectURL(blobUrl);
-      });
-    };
-  }
-};
+          URL.revokeObjectURL(blobUrl);
+        });
+      };
+    }
+  };
 
-
-  
-     
   const customRenderItem = (item) => (
     <div className={`image-gallery-image${item.show ? ' show' : ''}`}>
       <div
@@ -207,36 +183,51 @@ const commonImageHeight = Math.floor(commonImage.height);
           width: '200px',
           height: '200px',
           margin: '0 auto',
-          
         }}
       />
     </div>
   );
 
+  const convertToCartoon = async () => {
+    if (selectedImage) {
+      try {
+        const formData = new FormData();
+        formData.append('image', selectedImage);
+
+       
+        const response = await axios.post('https://api.gyanibooks.com/library/get_dummy_notes/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        
+        const cartoonImageUrl = response.data.cartoonImageUrl;
+        setCartoonImage(cartoonImageUrl);
+      } catch (error) {
+        console.error('Error converting image to cartoon:', error);
+      }
+    }
+  };
+
   return (
-
-    
-
-    
-		
-
-    <div className="App" style={{ width: '100%',  maxWidth: '1000px',height: '10vh', margin: '0 auto' }}>
-      <div className="image-gallery-container" style={{ height: '450px' ,left:'-130px' }}>
+    <div className="App" style={{ width: '100%', maxWidth: '1000px', height: '10vh', margin: '0 auto' }}>
+      <div className="image-gallery-container" style={{ height: '450px', left: '-130px' }}>
         <div className="carousel-button-group">
           <button
-             className={`carousel-button${showCarousel ? ' active' : ''}`}
+            className={`carousel-button${showCarousel ? ' active' : ''}`}
             onClick={() => handleShowCarousel(1, !showCarousel)}
           >
             {showCarousel ? 'All images' : 'All images '}
           </button>
           <button
-             className={`carousel-button${showCarousel2 ? ' active' : ''}`}
+            className={`carousel-button${showCarousel2 ? ' active' : ''}`}
             onClick={() => handleShowCarousel(2, !showCarousel2)}
           >
             {showCarousel2 ? 'girls images' : 'girls images'}
           </button>
           <button
-             className={`carousel-button${showCarousel3 ? ' active' : ''}`}
+            className={`carousel-button${showCarousel3 ? ' active' : ''}`}
             onClick={() => handleShowCarousel(3, !showCarousel3)}
           >
             {showCarousel3 ? 'boys images' : 'boys images'}
@@ -266,26 +257,13 @@ const commonImageHeight = Math.floor(commonImage.height);
               </button>
             )}
             renderItem={customRenderItem}
-            
-            
-           
-            onSlide={(currentIndex,event) => {
-                const updatedSlides = [...slides];
-                updatedSlides.forEach((slide, index) => {
-                  slide.show = index === currentIndex;
-                });
-                setSlides(updatedSlides);
-                
-              }}
-              
-              
-              
-
-             
-              
-
-   
-  
+            onSlide={(currentIndex) => {
+              const updatedSlides = [...slides];
+              updatedSlides.forEach((slide, index) => {
+                slide.show = index === currentIndex;
+              });
+              setSlides(updatedSlides);
+            }}
           />
         )}
         {showCarousel2 && (
@@ -313,12 +291,12 @@ const commonImageHeight = Math.floor(commonImage.height);
             )}
             renderItem={customRenderItem}
             onSlide={(currentIndex) => {
-                const updatedSlides = [...slides2];
-                updatedSlides.forEach((slide, index) => {
-                  slide.show = index === currentIndex;
-                });
-                setSlides2(updatedSlides);
-              }}
+              const updatedSlides = [...slides2];
+              updatedSlides.forEach((slide, index) => {
+                slide.show = index === currentIndex;
+              });
+              setSlides2(updatedSlides);
+            }}
           />
         )}
         {showCarousel3 && (
@@ -346,64 +324,59 @@ const commonImageHeight = Math.floor(commonImage.height);
             )}
             renderItem={customRenderItem}
             onSlide={(currentIndex) => {
-                const updatedSlides =  [...slides3];
-                updatedSlides.forEach ((slide, index) => {
-                  slide.show = index === currentIndex;
-                });
-                setSlides3(updatedSlides);
-              }}
-          
+              const updatedSlides = [...slides3];
+              updatedSlides.forEach((slide, index) => {
+                slide.show = index === currentIndex;
+              });
+              setSlides3(updatedSlides);
+            }}
           />
         )}
       </div>
 
-      <div style={{ marginTop: '-420px',top: '100px',textAlign:'right', marginRight: '-90px'}}>
-      
-
+      <div style={{ marginTop: '-420px', top: '100px', textAlign: 'right', marginRight: '-90px' }}>
         {mergedImage && (
           <div>
             <img src={mergedImage} alt="Merged" width="200" />
           </div>
         )}
         <center>
-        <div style={{ height: '10px',  marginTop:'-250px', marginBottom:'-10px',right:'-10px'}}>
-        <button onClick={downloadMergedImage}
-        style={{
-          backgroundColor: 'green',
-          color: 'white',
-          padding: '10px 20px',
-          border: 'none',
-          borderRadius: '4px',
-          fontSize: '16px',
-          alignItems:'center',
-          
-          
-          right:'-100px',
-          
-          
-        }}
-        >
-          
-          
-          Merge and Download</button>
-        </div>
-        
+          <div style={{ height: '10px', marginTop: '-250px', marginBottom: '-10px', right: '-10px' }}>
+            <button
+              onClick={downloadMergedImage}
+              style={{
+                backgroundColor: 'green',
+                color: 'white',
+                padding: '10px 20px',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '16px',
+                alignItems: 'center',
+                right: '-100px',
+              }}
+            >
+              Merge and Download
+            </button>
+          </div>
         </center>
-        <input 
-    type="file" 
-    style={{ 
-      position: 'absolute',
-      top: 50,  
-      left: 50,     
-      zIndex: 1  
-    }}  
-    accept="image/*"
-    onChange={handleCommonImageChange}
-  />   
-        </div>
-        
+        <input
+          type="file"
+          style={{
+            position: 'absolute',
+            top: 50,
+            left: 50,
+            zIndex: 1,
+          }}
+          accept="image/*"
+          onChange={handleCommonImageChange}
+        />
+
+        {selectedImage && <img src={selectedImage} alt="Selected" />}
+
+        <button onClick={convertToCartoon}>Convert to Cartoon</button>
+
+        {cartoonImage && <img src={cartoonImage} alt="Cartoon" />}
       </div>
-    
-    
+    </div>
   );
-} 
+}
