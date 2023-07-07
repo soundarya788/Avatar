@@ -57,27 +57,27 @@ export default function App() {
       const selectedSlides = slides.filter((slide) => slide.show);
       const selectedSlides2 = slides2.filter((slide) => slide.show);
       const selectedSlides3 = slides3.filter((slide) => slide.show);
-
+    
       const commonImage = new Image();
       commonImage.src = commonImageSrc;
-
+    
       await commonImage.decode();
-
+    
       const commonImageWidth = Math.floor(commonImage.width);
       const commonImageHeight = Math.floor(commonImage.height);
-
+    
       const selectedImgs = await Promise.all([
         ...selectedSlides.map((slide) => loadImage(slide.original)),
         ...selectedSlides2.map((slide) => loadImage(slide.original)),
         ...selectedSlides3.map((slide) => loadImage(slide.original)),
       ]);
-
+    
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       ctx.imageSmoothingEnabled = false;
-
+    
       const carouselImageHeight = 60;
-      const mergedWidth = Math.floor(Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width)));
+      const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
       const mergedHeight =
         Math.floor(
           commonImageHeight +
@@ -86,19 +86,19 @@ export default function App() {
         );
       canvas.width = mergedWidth;
       canvas.height = mergedHeight;
-
+    
       let offsetY = 1;
-
+    
       selectedImgs.forEach(({ img, width, height }) => {
         ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
         offsetY += carouselImageHeight;
       });
       ctx.drawImage(commonImage, (mergedWidth - 50) / 2, 0, 50, 50);
-
+    
       const mergedImageUrl = canvas.toDataURL('image/png', 1);
       setMergedImage(mergedImageUrl);
     };
-
+    
     mergeImages();
   }, [slides, slides2, slides3, commonImageSrc]);
 
@@ -334,7 +334,7 @@ export default function App() {
         )}
       </div>
 
-      <div style={{ marginTop: '-420px', top: '100px', textAlign: 'right', marginRight: '-90px' }}>
+      <div style={{ marginTop: '-400px', top: '100px', textAlign: 'right', marginRight: '-90px'}}>
         {mergedImage && (
           <div>
             <img src={mergedImage} alt="Merged" width="200" />
@@ -353,6 +353,7 @@ export default function App() {
                 fontSize: '16px',
                 alignItems: 'center',
                 right: '-100px',
+                
               }}
             >
               Merge and Download
