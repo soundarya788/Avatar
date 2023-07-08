@@ -9,7 +9,10 @@ export default function App() {
   const [commonImageSrc, setCommonImageSrc] = useState('/images/image+2.png');
   const [selectedImage] = useState(null); 
   const [cartoonImage, setCartoonImage] = useState(null);
+  
 
+
+  
   const handleCommonImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -20,6 +23,8 @@ export default function App() {
       reader.readAsDataURL(file);
     }
   };
+
+  
 
   const [slides, setSlides] = useState([
     { original: '', thumbnail: '', show: false },
@@ -334,14 +339,14 @@ export default function App() {
         )}
       </div>
 
-      <div style={{ marginTop: '-400px', top: '100px', textAlign: 'right', marginRight: '-90px'}}>
+      <div  style={{ marginTop: '-400px', top: '100px', textAlign: 'right', marginRight: '-110px',width: 'auto', height: 'auto'}}>
         {mergedImage && (
           <div>
-            <img src={mergedImage} alt="Merged" width="200" />
+            <img src={mergedImage} alt="Merged" style={{ width: 'auto', height: 'auto' ,position:'relative'}} />
           </div>
         )}
         <center>
-          <div style={{ height: '10px', marginTop: '-250px', marginBottom: '-10px', right: '-10px' }}>
+          <div style={{ height: '10px', marginTop: '-50px', marginBottom: '-10px', right: '-10px' }}>
             <button
               onClick={downloadMergedImage}
               style={{
@@ -363,21 +368,27 @@ export default function App() {
         <input
           type="file"
           style={{
-            position: 'absolute',
+            position:"absolute",
             top: 50,
             left: 50,
             zIndex: 1,
+            
           }}
           accept="image/*"
-          onChange={handleCommonImageChange}
+          onChange= {handleCommonImageChange}
         />
 
+        <div style={{position:'relative', top: '-70px', left: '-450px',marginRight:'-500px' }}>  
         {selectedImage && <img src={selectedImage} alt="Selected" />}
-
-        <button onClick={convertToCartoon}>Convert to Cartoon</button>
-
-        {cartoonImage && <img src={cartoonImage} alt="Cartoon" />}
+      
+       <button onClick={convertToCartoon}>Convert to Cartoon</button>
+            
+       {cartoonImage && <img src={cartoonImage} alt="Cartoon" />}
+        
       </div>
-    </div>
+      </div>
+      </div>
+      
+  
   );
 }
