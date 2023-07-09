@@ -142,3 +142,38 @@ code {
 
 }
 
+.image-gallery-container {
+  height: 450px;
+  left: -130px;
+}
+
+.merged-image {
+  width: auto;
+  height: auto;
+  position: relative;
+}
+
+.download-button {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  align-items: center;
+  right: -100px;
+}
+
+.file-input {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  z-index: 1;
+}
+
+.image-container {
+  position: relative;
+  top: -70px;
+  left: -450px;
+  margin-right: -500px;
+}
