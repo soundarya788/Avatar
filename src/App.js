@@ -550,7 +550,7 @@ export default function App() {
         
           {selectedImage && <img src={selectedImage} alt="Selected" />}
 
-          <button onClick={convertToCartoon}>Convert to Cartoon</button>
+          <button onClick={convertToCartoon}>convert to Cartoon</button>
 
           {cartoonImage && <img src={cartoonImage} alt="Cartoon" />}
         </div>
