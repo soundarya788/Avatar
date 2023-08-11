@@ -244,7 +244,7 @@ export default function App() {
         id="topPosition"
         value={topPosition}
         onChange={(e) => setTopPosition(Number(e.target.value))}
-        style={{ marginLeft: '-110px',position:'relative', top: '450px'   }}
+        style={{ marginLeft: '-190px',position:'relative', top: '450px'   }}
       />
 
       
