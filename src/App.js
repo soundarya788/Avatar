@@ -11,7 +11,7 @@ export default function App() {
   const [cartoonImage, setCartoonImage] = useState(null);
 
   const [topPosition, setTopPosition] = useState(0);
-  const [downPosition, setDownPosition] = useState(0);
+  const [downPosition] = useState(0);
   const [slides, setSlides] = useState([
     { original: '/images/image+1.png', show: false },
     { original: '/images/image+5.png', show: false },
@@ -234,32 +234,31 @@ export default function App() {
 
   return (
     <div style={{ position: 'fixed', top: 5, right: 40, padding: '10px' }}>
-      <label htmlFor="topPosition">Top Position:</label>
+      <label htmlFor="topPosition" 
+      style={{ position: 'fixed', top: '465px', left: '860px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+        Adjust Position:
+        </label>
+      
       <input
         type="number"
         id="topPosition"
         value={topPosition}
         onChange={(e) => setTopPosition(Number(e.target.value))}
-        style={{ marginLeft: '5px' }}
+        style={{ marginLeft: '-110px',position:'relative', top: '450px'   }}
       />
 
-      <label htmlFor="downPosition">Down Position:</label>
-      <input
-        type="number"
-        id="downPosition"
-        value={downPosition}
-        onChange={(e) => setDownPosition(Number(e.target.value))}
-        style={{ marginLeft: '5px' }}
-      />
+      
 
       <div>
+      <h4 style={{ position: 'fixed', top: '0px', left: '130px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+          upload body image</h4>
         <input
           type="file"
           className="custom-file-input"
           style={{
             position: 'absolute',
             top: 50,
-            left: -600,
+            left: -1010,
             zIndex: 1,
             backgroundColor: '#74b9ff',
           }}
@@ -282,13 +281,15 @@ export default function App() {
             top: '110px',
           }}
         >
-          Add to Carousel
+          Add to images
         </button>
 
         <div className="App" style={{ width: '100%', maxWidth: '1000px', height: '10vh', margin: '0 auto' }}>
           <div className="image-gallery-container" style={{ height: '450px', left: '130px', top: '200px', position: 'fixed' }}>
             <div className="carousel-container" style={{ padding: '10px', top: '-100px' }}>
               <div className="carousel-button-group">
+                <h3 style={{ position: 'fixed', top: '175px', left: '10px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+                  Click  All images button to show images</h3>
                 <button
                   className={`carousel-button${showCarousel ? ' active' : ''}`}
                   onClick={() => handleShowCarousel(1, !showCarousel)}
@@ -346,7 +347,7 @@ export default function App() {
         <div style={{ marginTop: '-400px', top: '600px', textAlign: 'right', marginRight: '-110px', width: 'auto', height: 'auto' }}>
           <div style={{ position: 'relative' }}>
             {mergedImage && (
-              <div style={{ border: '2px solid black', marginTop: 500, height: '300px', width: '300px', position: 'fixed', right: '100px', backgroundColor: '#dcdde1' }}>
+              <div style={{ border: '2px solid black', marginTop: 400, height: '350px', width: '300px', position: 'fixed', right: '100px', backgroundColor: '#dcdde1' }}>
                 <img src={mergedImage} alt="Merged" style={{ width: '200px', height: '600px', position: 'relative', top: '70px', left: '-40px' }} />
               </div>
             )}
@@ -365,7 +366,7 @@ export default function App() {
                 borderRadius: '4px',
                 fontSize: '16px',
                 alignItems: 'center',
-                right: '-60px',
+                right: '140px',
                 position: 'relative',
                 top: '810px',
               }}
@@ -375,12 +376,15 @@ export default function App() {
           </div>
         </center>
 
+        <h4 style={{ position: 'fixed', top: '-15px', left: '930px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+          upload head image</h4>
+
         <input
           type="file"
           className="custom-file-input"
           style={{
             position: 'absolute',
-            top: 80,
+            top: 40,
             right: '82px',
             zIndex: 1,
             backgroundColor: '#74b9ff',
