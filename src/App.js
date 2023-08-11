@@ -235,7 +235,7 @@ export default function App() {
   return (
     <div style={{ position:'fixed', top: 5, right: 40, padding: '10px' }}>
       <label htmlFor="topPosition" 
-      style={{ position:'fixed', top: '465px', left: '860px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+      style={{ position:'fixed', top: '115px', left: '860px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
         Adjust Position:
         </label>
       
@@ -244,7 +244,7 @@ export default function App() {
         id="topPosition"
         value={topPosition}
         onChange={(e) => setTopPosition(Number(e.target.value))}
-        style={{ marginLeft: '-200px',position:'relative', top: '450px'   }}
+        style={{ marginLeft: '-110px',position:'relative', top: '100px'   }}
       />
 
       
@@ -347,7 +347,7 @@ export default function App() {
         <div style={{ marginTop: '-400px', top: '600px', textAlign: 'right', marginRight: '-110px', width: 'auto', height: 'auto' }}>
           <div style={{ position: 'relative' }}>
             {mergedImage && (
-              <div style={{ border: '2px solid black', marginTop: 400, height: '350px', width: '300px', position: 'fixed', right: '100px', backgroundColor: '#dcdde1' }}>
+              <div style={{ border: '2px solid black', marginTop: 450, height: '350px', width: '300px', position: 'fixed', right: '100px', backgroundColor: '#dcdde1' }}>
                 <img src={mergedImage} alt="Merged" style={{ width: '200px', height: '600px', position: 'relative', top: '70px', left: '-40px' }} />
               </div>
             )}
