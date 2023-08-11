@@ -235,7 +235,7 @@ export default function App() {
   return (
     <div style={{ position:'fixed', top: 5, right: 40, padding: '10px' }}>
       <label htmlFor="topPosition" 
-      style={{ position:'fixed', top: '115px', left: '860px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
+      style={{ position:'fixed', top: '115px', left: '890px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
         Adjust Position:
         </label>
       
