@@ -187,6 +187,7 @@ export default function App() {
   };
 
   return (
+    <div style={{height:'10px'}}>
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-6">
@@ -317,6 +318,7 @@ export default function App() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }
