@@ -1,87 +1,149 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import ImageGallery from 'react-image-gallery';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import 'react-image-gallery/styles/css/image-gallery.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App() {
-  const [commonImageSrc, setCommonImageSrc] = useState('/images/image+2.png');
-  const [selectedImage] = useState(null);
-  const [newImageFile, setNewImageFile] = useState(null);
+  const [commonImageSrc, setCommonImageSrc] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
   const [cartoonImage, setCartoonImage] = useState(null);
 
   const [topPosition, setTopPosition] = useState(0);
-  const [downPosition] = useState(0);
-  const [slides, setSlides] = useState([
-    { original: '/images/image+1.png', show: false },
-    { original: '/images/image+5.png', show: false },
-    { original: '/images/image+3.png', show: false },
-    { original: '/images/image+7.png', show: false },
-    { original: '/images/image+15.png', show: false },
-    { original: '/images/image+4.png', show: false },
-    { original: '/images/image+8.png', show: false },
-  ]);
+  const [bodyLeftPosition, setBodyLeftPosition] = useState(0);
 
   const [mergedImage, setMergedImage] = useState(null);
-  const [showCarousel, setShowCarousel] = useState(false);
+
+  const handleCommonImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setCommonImageSrc(e.target.result);
+        resizeImage(e.target.result, 150, 230, (resizedImageUrl) => {
+          setCommonImageSrc(resizedImageUrl);
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleBodyImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const incrementTopPosition = () => {
+    setTopPosition(topPosition + 1);
+  };
+
+  const decrementTopPosition = () => {
+    if (topPosition > 0) {
+      setTopPosition(topPosition - 1);
+    }
+  };
+
+  const incrementBodyLeftPosition = () => {
+    setBodyLeftPosition(bodyLeftPosition + 1);
+  };
+
+  const decrementBodyLeftPosition = () => {
+    if (bodyLeftPosition > 0) {
+      setBodyLeftPosition(bodyLeftPosition - 1);
+    }
+  };
 
   useEffect(() => {
     const mergeImages = async () => {
-      const selectedSlides = slides.filter((slide) => slide.show);
-      const commonImage = new Image();
-      commonImage.src = commonImageSrc;
+      if (commonImageSrc && selectedImage) {
+        const commonImage = new Image();
+        commonImage.src = commonImageSrc;
 
-      await commonImage.decode();
+        await commonImage.decode();
 
-      const commonImageWidth = Math.floor(commonImage.width);
-      const commonImageHeight = Math.floor(commonImage.height);
+        const commonImageWidth = Math.floor(commonImage.width);
+        const commonImageHeight = Math.floor(commonImage.height);
 
-      const selectedImgs = await Promise.all(
-        selectedSlides.map((slide) => loadImage(slide.original))
-      );
+        const bodyImage = new Image();
+        bodyImage.src = selectedImage;
 
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.imageSmoothingEnabled = false;
+        await bodyImage.decode();
 
-      const carouselImageHeight = 60;
-      const mergedWidth = Math.max(commonImageWidth, ...selectedImgs.map((img) => img.width));
-      const mergedHeight =
-        Math.floor(commonImageHeight + selectedSlides.length * carouselImageHeight + 300);
-      canvas.width = mergedWidth;
-      canvas.height = mergedHeight;
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
 
-      let offsetY = 1 + topPosition;
+        const mergedWidth = Math.max(commonImageWidth, bodyImage.width);
+        const mergedHeight = Math.floor(commonImageHeight + bodyImage.height + 300);
+        canvas.width = mergedWidth;
+        canvas.height = mergedHeight;
 
-      selectedImgs.forEach(({ img, width, height }) => {
-        ctx.drawImage(img, (mergedWidth - width) / 2, offsetY, width, height);
-        offsetY += carouselImageHeight;
-      });
-      ctx.drawImage(commonImage, (mergedWidth - 50) / 2, downPosition, 50, 50);
+        const bodyXPosition = (mergedWidth - bodyImage.width) / 2 + bodyLeftPosition;
+        const bodyYPosition = topPosition;
 
-      const mergedImageUrl = canvas.toDataURL('image/png', 1);
-      setMergedImage(mergedImageUrl);
+        ctx.drawImage(bodyImage, bodyXPosition, bodyYPosition + 35, bodyImage.width, bodyImage.height);
+        ctx.drawImage(commonImage, 45, 0, 50, 50);
+
+        const mergedImageUrl = canvas.toDataURL('image/png', 1);
+        setMergedImage(mergedImageUrl);
+      }
     };
 
     mergeImages();
-  }, [slides, commonImageSrc, topPosition, downPosition]);
+  }, [commonImageSrc, selectedImage, topPosition, bodyLeftPosition]);
 
-  const loadImage = (src) => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.src = src;
-      img.onload = () => resolve({ img, width: img.width, height: img.height });
-      img.onerror = (error) => reject(error);
-    });
+  const resizeImage = (imageUrl, maxWidth, maxHeight, callback) => {
+    const img = new Image();
+    img.src = imageUrl;
+
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth) {
+        height *= maxWidth / width;
+        width = maxWidth;
+      }
+
+      if (height > maxHeight) {
+        width *= maxHeight / height;
+        height = maxHeight;
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const resizedImageUrl = canvas.toDataURL('image/jpeg');
+      callback(resizedImageUrl);
+    };
   };
 
-  const handleShowCarousel = (carouselNumber, showCarousel) => {
-    switch (carouselNumber) {
-      case 1:
-        setShowCarousel(showCarousel);
-        break;
-      default:
-        break;
+  const convertToCartoon = async () => {
+    if (selectedImage) {
+      try {
+        const formData = new FormData();
+        formData.append('image', selectedImage);
+
+        const response = await axios.post('https://api.gyanibooks.com/library/get_dummy_notes/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        const cartoonImageUrl = response.data.cartoonImageUrl;
+        setCartoonImage(cartoonImageUrl);
+      } catch (error) {
+        console.error('Error converting image to cartoon:', error);
+      }
     }
   };
 
@@ -124,274 +186,136 @@ export default function App() {
     }
   };
 
-  const handleNewImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setNewImageFile(file);
-    }
-  };
-
-  const handleAddToCarousel = () => {
-    if (newImageFile) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const tempImageUrl = e.target.result;
-
-        resizeImage(tempImageUrl, 150, 200, (resizedImageUrl) => {
-          const newSlide = {
-            original: resizedImageUrl,
-            show: false,
-          };
-          setSlides((prevSlides) => [...prevSlides, newSlide]);
-        });
-      };
-      reader.readAsDataURL(newImageFile);
-      setNewImageFile(null);
-    }
-  };
-
-  const handleCommonImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setCommonImageSrc(e.target.result);
-        resizeImage(e.target.result, 150, 230, (resizedImageUrl) => {
-          setCommonImageSrc(resizedImageUrl);
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const resizeImage = (imageUrl, maxWidth, maxHeight, callback) => {
-    const img = new Image();
-    img.src = imageUrl;
-
-    img.onload = () => {
-      let width = img.width;
-      let height = img.height;
-
-      if (width > maxWidth) {
-        height *= maxWidth / width;
-        width = maxWidth;
-      }
-
-      if (height > maxHeight) {
-        width *= maxHeight / height;
-        height = maxHeight;
-      }
-
-      const canvas = document.createElement('canvas');
-      canvas.width = width;
-      canvas.height = height;
-
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-
-      const resizedImageUrl = canvas.toDataURL('image/jpeg');
-      callback(resizedImageUrl);
-    };
-  };
-
-  const customRenderItem = (item) => (
-    <div className={`image-gallery-image${item.show ? ' show' : ''}`}>
-      <div className="carousel-image-box" style={{ width: '200px', height: '200px', margin: '0 auto', overflow: 'hidden' }}>
-        <div
-          className="carousel-image"
-          style={{
-            backgroundImage: `url(${item.original})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            width: '100%',
-            height: '100%',
-            
-          }}
-        />
-      </div>
-    </div>
-  );
-
-  const convertToCartoon = async () => {
-    if (selectedImage) {
-      try {
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-
-        const response = await axios.post('https://api.gyanibooks.com/library/get_dummy_notes/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        const cartoonImageUrl = response.data.cartoonImageUrl;
-        setCartoonImage(cartoonImageUrl);
-      } catch (error) {
-        console.error('Error converting image to cartoon:', error);
-      }
-    }
-  };
-
   return (
-    <div style={{ position:'fixed', top: 5, right: 40, padding: '10px' }}>
-      <label htmlFor="topPosition" 
-      style={{ position:'fixed', top: '115px', left: '890px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
-        Adjust Position:
-        </label>
-      
-      <input
-        type="number"
-        id="topPosition"
-        value={topPosition}
-        onChange={(e) => setTopPosition(Number(e.target.value))}
-        style={{ marginLeft: '-110px',position:'relative', top: '100px'   }}
-      />
+    <div className="container mt-5">
+      <div className="row">
+        <div className="col-md-6">
+          <div className="form-group">
+            <label htmlFor="headImageInput" className="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-upload" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+              </svg>
+              Browse
+              <input
+                type="file"
+                id="headImageInput"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleCommonImageChange}
+              />
+            </label>
+          </div>
+          {commonImageSrc ? (
+            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '1px dashed #ccc' }}>
+              <img src={commonImageSrc} alt="Head" className="img-fluid" style={{ maxWidth: '100%' }} />
+            </div>
+          ) : (
+            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '1px dashed #ccc' }}>
+              <div className="text-center">Upload a head image</div>
+            </div>
+          )}
+        </div>
 
-      
+        <div style={{ marginLeft: '300px', marginTop: '-250px' }} className="col-md-6">
+          <div className="form-group">
+            <label htmlFor="bodyImageInput" className="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-upload" viewBox="0 0 16 16">
+                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+              </svg>
+              Browse
+              <input
+                type="file"
+                id="bodyImageInput"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleBodyImageChange}
+              />
+            </label>
+          </div>
+          {selectedImage ? (
+            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '1px dashed #ccc' }}>
+              <img src={selectedImage} alt="Body" className="img-fluid" style={{ maxWidth: '100%' }} />
+            </div>
+          ) : (
+            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '1px dashed #ccc' }}>
+              <div className="text-center">Upload a body image</div>
+            </div>
+          )}
+        </div>
+      </div>
 
-      <div>
-      <h4 style={{ position: 'fixed', top: '0px', left: '130px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
-          upload body image</h4>
-        <input
-          type="file"
-          className="custom-file-input"
-          style={{
-            position: 'absolute',
-            top: 50,
-            left: -1010,
-            zIndex: 1,
-            backgroundColor: '#74b9ff',
-          }}
-          accept="image/*"
-          onChange={handleNewImageChange}
-        />
+      <div className="row mt-5">
+        <div className="col-md-12">
+          <div className="rounded p-3 d-flex justify-content-center align-items-center flex-column" style={{ height: '200px', width: '300px', marginLeft: '700px', marginTop: '-250px',border: '4px dashed #ccc'  }}>
+            {mergedImage && (
+              <div>
+                <img
+                  src={mergedImage}
+                  alt="Merged"
+                  className="img-fluid"
+                  style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '350px' ,marginLeft:'10px'}}
+                />
+              </div>
+            )}
+            <div style={{marginTop:'-250px',marginLeft:'-140px',position:'absolute'}}>Adjust Positioning:</div>
+            <div style={{position:'absolute'}} className="mt-3">
+            
+              <div style={{ marginTop: '-150px', position: 'absolute' }} className="d-flex">
+                <div style={{ marginLeft: '10px' }} className="mr-2">
+                
+                  <button  onClick={decrementBodyLeftPosition}>
 
-        <button
-          onClick={handleAddToCarousel}
-          style={{
-            backgroundColor: '#44bd32',
-            color: 'white',
-            padding: '10px 20px',
-            border: 'none',
-            borderRadius: '4px',
-            fontSize: '16px',
-            alignItems: 'center',
-            right: '980px',
-            position: 'fixed',
-            top: '110px',
-          }}
-        >
-          Add to images
-        </button>
-
-        <div className="App" style={{ width: '100%', maxWidth: '1000px', height: '10vh', margin: '0 auto' }}>
-          <div className="image-gallery-container" style={{ height: '450px', left: '130px', top: '200px', position: 'fixed' }}>
-            <div className="carousel-container" style={{ padding: '10px', top: '-100px' }}>
-              <div className="carousel-button-group">
-                <h3 style={{ position: 'fixed', top: '175px', left: '10px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
-                  Click  All images button to show images</h3>
-                <button
-                  className={`carousel-button${showCarousel ? ' active' : ''}`}
-                  onClick={() => handleShowCarousel(1, !showCarousel)}
-                >
-                  {showCarousel ? 'All images' : 'All images '}
-                </button>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+</svg>
+                  </button>
+                </div>
+                <div className="mr-2">
+                  <button  onClick={incrementTopPosition}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+</svg>
+                  </button>
+                </div>
+                <div className="ml-2">
+                  <button  onClick={decrementTopPosition}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+</svg>
+                  </button>
+                </div>
+                <div className="ml-2">
+                  <button  onClick={incrementBodyLeftPosition}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+</svg>
+                  </button>
+                </div>
               </div>
             </div>
-            {showCarousel && (
-              <ImageGallery
-                items={slides}
-                showPlayButton={false}
-                showFullscreenButton={false}
-                renderLeftNav={(onClick, disabled) => (
-                  <button
-                    style={{ position: 'absolute', top: 100, left: -40 }}
-                    className={`image-gallery-icon image-gallery-left-nav${disabled ? ' disabled' : ''}`}
-                    disabled={disabled}
-                    onClick={onClick}
-                  >
-                    <FaChevronLeft />
-                  </button>
-                )}
-                renderRightNav={(onClick, disabled) => (
-                  <button
-                    style={{ position: 'absolute', top: 100, left: 220 }}
-                    className={`image-gallery-icon image-gallery-right-nav${disabled ? ' disabled' : ''}`}
-                    disabled={disabled}
-                    onClick={onClick}
-                  >
-                    <FaChevronRight />
-                  </button>
-                )}
-                renderItem={customRenderItem}
-                onSlide={(currentIndex) => {
-                  const updatedSlides = [...slides];
-                  updatedSlides.forEach((slide, index) => {
-                    slide.show = index === currentIndex;
-                  });
-                  setSlides(updatedSlides);
-                }}
-              />
-            )}
           </div>
-
-          <div style={{ position: 'relative', top: '-70px', left: '-450px', marginRight: '-500px', width: '200px' }}>
-            {selectedImage && <img src={selectedImage} alt="Selected" />}
-            <button onClick={convertToCartoon}>Convert to Cartoon</button>
-            {cartoonImage && <img src={cartoonImage} alt="Cartoon" />}
-          </div>
-        </div>
-      </div>
-
-      <div className="merged">
-        <div style={{ marginTop: '-400px', top: '600px', textAlign: 'right', marginRight: '-110px', width: 'auto', height: 'auto' }}>
-          <div style={{ position: 'relative' }}>
-            {mergedImage && (
-              <div style={{ border: '2px solid black', marginTop: 450, height: '350px', width: '300px', position: 'fixed', right: '100px', backgroundColor: '#dcdde1' }}>
-                <img src={mergedImage} alt="Merged" style={{ width: '200px', height: '600px', position: 'relative', top: '70px', left: '-40px' }} />
-              </div>
-            )}
-          </div>
-        </div>
-
-        <center>
-          <div style={{ height: '10px', marginTop: '-50px', marginBottom: '-10px', right: '-10px' }}>
+          <div style={{marginLeft:'600px'}} className="text-center mt-3">
             <button
               onClick={downloadMergedImage}
-              style={{
-                backgroundColor: '#44bd32',
-                color: 'white',
-                padding: '10px 20px',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '16px',
-                alignItems: 'center',
-                right: '140px',
-                position: 'relative',
-                top: '810px',
-              }}
+              className="btn btn-success"
             >
               Download
             </button>
           </div>
-        </center>
-
-        <h4 style={{ position: 'fixed', top: '-15px', left: '930px', fontSize: '16px', fontWeight: 'bold', color: 'black' }}>
-          upload head image</h4>
-
-        <input
-          type="file"
-          className="custom-file-input"
-          style={{
-            position: 'absolute',
-            top: 40,
-            right: '82px',
-            zIndex: 1,
-            backgroundColor: '#74b9ff',
-          }}
-          accept="image/*"
-          onChange={handleCommonImageChange}
-        />
+          <h4 className="mt-3" style={{ top: '200px' }}>Convert to Cartoon</h4>
+          <div className="text-center">
+            <button onClick={convertToCartoon} className="btn btn-primary">
+              Convert to Cartoon
+            </button>
+          </div>
+          {cartoonImage && (
+            <div className="border p-3 mt-3">
+              <img src={cartoonImage} alt="Cartoon" className="img-fluid" style={{ maxWidth: '100%' }} />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
