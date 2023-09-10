@@ -18,8 +18,7 @@ export default function App() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setCommonImageSrc(e.target.result);
-        resizeImage(e.target.result, 150, 230, (resizedImageUrl) => {
+        resizeImage(e.target.result, 290, 230, (resizedImageUrl) => {
           setCommonImageSrc(resizedImageUrl);
         });
       };
@@ -32,18 +31,21 @@ export default function App() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        setSelectedImage(e.target.result);
+        resizeImage(e.target.result, 100, 100, (resizedImageUrl) => {
+          setSelectedImage(resizedImageUrl);
+        });
       };
       reader.readAsDataURL(file);
     }
   };
+  
 
   const incrementTopPosition = () => {
     setTopPosition(topPosition + 1);
   };
 
   const decrementTopPosition = () => {
-    if (topPosition > 0) {
+    if (topPosition > -100) {
       setTopPosition(topPosition - 1);
     }
   };
@@ -53,7 +55,7 @@ export default function App() {
   };
 
   const decrementBodyLeftPosition = () => {
-    if (bodyLeftPosition > 0) {
+    if (bodyLeftPosition > -100) {
       setBodyLeftPosition(bodyLeftPosition - 1);
     }
   };
@@ -64,7 +66,10 @@ export default function App() {
         const commonImage = new Image();
         commonImage.src = commonImageSrc;
 
+       
+
         await commonImage.decode();
+        
 
         const commonImageWidth = Math.floor(commonImage.width);
         const commonImageHeight = Math.floor(commonImage.height);
@@ -86,8 +91,9 @@ export default function App() {
         const bodyXPosition = (mergedWidth - bodyImage.width) / 2 + bodyLeftPosition;
         const bodyYPosition = topPosition;
 
-        ctx.drawImage(bodyImage, bodyXPosition, bodyYPosition + 35, bodyImage.width, bodyImage.height);
-        ctx.drawImage(commonImage, 45, 0, 50, 50);
+        ctx.drawImage(bodyImage, bodyXPosition, bodyYPosition + 85, 120, 130);
+        ctx.drawImage(commonImage, 80, 10, 130, 80); 
+        
 
         const mergedImageUrl = canvas.toDataURL('image/png', 1);
         setMergedImage(mergedImageUrl);
@@ -97,35 +103,37 @@ export default function App() {
     mergeImages();
   }, [commonImageSrc, selectedImage, topPosition, bodyLeftPosition]);
 
+  
+  
+    
   const resizeImage = (imageUrl, maxWidth, maxHeight, callback) => {
     const img = new Image();
     img.src = imageUrl;
 
     img.onload = () => {
-      let width = img.width;
-      let height = img.height;
-
-      if (width > maxWidth) {
-        height *= maxWidth / width;
-        width = maxWidth;
-      }
-
-      if (height > maxHeight) {
-        width *= maxHeight / height;
-        height = maxHeight;
-      }
+      const width = maxWidth;
+      const height = (width * img.height) / img.width;
 
       const canvas = document.createElement('canvas');
       canvas.width = width;
       canvas.height = height;
 
+      
+
       const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, width, height);
+
       ctx.drawImage(img, 0, 0, width, height);
 
       const resizedImageUrl = canvas.toDataURL('image/jpeg');
       callback(resizedImageUrl);
     };
   };
+      
+
+      
+
 
   const convertToCartoon = async () => {
     if (selectedImage) {
@@ -187,7 +195,6 @@ export default function App() {
   };
 
   return (
-    <div style={{height:'100px'}}>
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-6">
@@ -236,40 +243,46 @@ export default function App() {
             </label>
           </div>
           {selectedImage ? (
-            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '1px dashed #ccc' }}>
-              <img src={selectedImage} alt="Body" className="img-fluid" style={{ maxWidth: '100%' }} />
-            </div>
-          ) : (
-            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '1px dashed #ccc' }}>
-              <div className="text-center">Upload a body image</div>
-            </div>
-          )}
+  <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '1px dashed #ccc' }}>
+    <img
+      src={selectedImage}
+      alt="Body"
+      className="img-fluid"
+      style={{ maxWidth: '100%', maxHeight: '100%' }}
+    />
+  </div>
+) : (
+  <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '1px dashed #ccc' }}>
+    <div className="text-center">Upload a body image</div>
+  </div>
+)}
+
         </div>
       </div>
 
       <div className="row mt-5">
         <div className="col-md-12">
-          <div className="rounded p-3 d-flex justify-content-center align-items-center flex-column" style={{ height: '200px', width: '300px', marginLeft: '700px', marginTop: '-250px',border: '4px dashed #ccc'  }}>
+          <div className="rounded p-3 d-flex justify-content-center align-items-center flex-column" style={{ height: '300px', width: '300px', marginLeft: '700px', marginTop: '-250px',border: '4px dashed #ccc'  }}>
             {mergedImage && (
               <div>
                 <img
                   src={mergedImage}
                   alt="Merged"
                   className="img-fluid"
-                  style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '350px' ,marginLeft:'10px'}}
+                  style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '290px' ,marginLeft:'40px'}}
                 />
               </div>
             )}
-            <div style={{marginTop:'-250px',marginLeft:'-140px',position:'absolute'}}>Adjust Positioning:</div>
+            <div style={{marginTop:'-350px',marginLeft:'-140px',position:'absolute'}}>Adjust Positioning:</div>
             <div style={{position:'absolute'}} className="mt-3">
             
-              <div style={{ marginTop: '-150px', position: 'absolute' }} className="d-flex">
+              <div style={{ marginTop: '-200px', position: 'absolute' }} className="d-flex">
                 <div style={{ marginLeft: '10px' }} className="mr-2">
                 
                   <button  onClick={decrementBodyLeftPosition}>
 
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z"/>
+  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0l-2.146 2.147H11.5z"/>
 </svg>
                   </button>
                 </div>
@@ -283,14 +296,14 @@ export default function App() {
                 <div className="ml-2">
                   <button  onClick={decrementTopPosition}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-  <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
+  <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 0-.708l-3-3a.5.5 0 1 1-.708.708L10.293 7.5H4.5z"/>
 </svg>
                   </button>
                 </div>
                 <div className="ml-2">
                   <button  onClick={incrementBodyLeftPosition}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L10.293 7.5H4.5z"/>
 </svg>
                   </button>
                 </div>
@@ -298,12 +311,14 @@ export default function App() {
             </div>
           </div>
           <div style={{marginLeft:'600px'}} className="text-center mt-3">
+            <div style={{marginTop:'50px'}}> 
             <button
               onClick={downloadMergedImage}
               className="btn btn-success"
             >
               Download
             </button>
+            </div>
           </div>
           <h4 className="mt-3" style={{ top: '200px' }}>Convert to Cartoon</h4>
           <div className="text-center">
@@ -318,7 +333,6 @@ export default function App() {
           )}
         </div>
       </div>
-    </div>
     </div>
   );
 }
