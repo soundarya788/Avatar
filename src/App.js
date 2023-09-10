@@ -91,7 +91,7 @@ export default function App() {
         const bodyXPosition = (mergedWidth - bodyImage.width) / 2 + bodyLeftPosition;
         const bodyYPosition = topPosition;
 
-        ctx.drawImage(bodyImage, bodyXPosition, bodyYPosition + 85, 120, 130);
+        ctx.drawImage(bodyImage, bodyXPosition, bodyYPosition + 75, 100, 130);
         ctx.drawImage(commonImage, 80, 10, 130, 80); 
         
 
@@ -195,6 +195,8 @@ export default function App() {
   };
 
   return (
+    <div style={{height:'100px'}}>
+    <div className="container mt-5" style={{ backgroundColor: '#f0f0f0' }}>
     <div className="container mt-5">
       <div className="row">
         <div className="col-md-6">
@@ -333,6 +335,8 @@ export default function App() {
           )}
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 }
