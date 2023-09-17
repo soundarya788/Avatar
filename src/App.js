@@ -248,7 +248,7 @@ export default function App() {
               <div className="form-group">
                 <label
                   htmlFor="headImageInput"
-                  style={{ position: 'absolute', top: '50px', left: '160px', transform: 'translateX(-50%)' }}
+                  style={{ position: 'absolute', top: '50px', left: '200px', transform: 'translateX(-50%)' }}
                   className="btn btn-primary"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
@@ -418,7 +418,7 @@ export default function App() {
         </button>
       </div>
 
-      <div className="mt-5" style={{ marginLeft: '600px', marginTop: '-30px', position: 'absolute' }}>
+      <div className="mt-5" style={{ marginLeft: '630px', marginTop: '-30px', position: 'absolute' }}>
         <div>
           <button
             className={`btn ${showSlides1 ? 'btn-primary' : 'btn-outline-primary'}`}
