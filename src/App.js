@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Carousel from 'react-bootstrap/Carousel';
 
 export default function App() {
   const [commonImageSrc, setCommonImageSrc] = useState(null);
@@ -12,6 +13,77 @@ export default function App() {
   const [bodyLeftPosition, setBodyLeftPosition] = useState(0);
 
   const [mergedImage, setMergedImage] = useState(null);
+  const [showCarousel, setShowCarousel] = useState(false);
+  const [showSlides1] = useState(true);
+  const [showSlides2, setShowSlides2] = useState(false); // State for Slides 2
+  const [showSlides3, setShowSlides3] = useState(false); // State for Slides 3
+
+  const [slides1] = useState([
+    '/images/image+1.png',
+    '/images/image+5.png',
+    '/images/image+3.png',
+    '/images/image+7.png',
+    '/images/image+15.png',
+  ]);
+
+  const [slides2] = useState([
+    '/images/image+1.png',
+    '/images/image+5.png',
+  ]);
+
+  const [slides3] = useState([
+    '/images/image+3.png',
+    '/images/image+11.png',
+  ]);
+
+  
+
+  const [currentSlides, setCurrentSlides] = useState(slides1);
+
+  useEffect(() => {
+    
+    const mergeImages = async (headImageSrc, bodyImageSrc, top, left) => {
+      const commonImage = new Image();
+      commonImage.src = headImageSrc;
+
+      await commonImage.decode();
+
+      const commonImageWidth = Math.floor(commonImage.width);
+      const commonImageHeight = Math.floor(commonImage.height);
+
+      const bodyImage = new Image();
+      bodyImage.src = bodyImageSrc;
+
+      await bodyImage.decode();
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingEnabled = false;
+
+      const mergedWidth = Math.max(commonImageWidth, bodyImage.width);
+      const mergedHeight = Math.floor(commonImageHeight + bodyImage.height + 200);
+      canvas.width = mergedWidth;
+      canvas.height = mergedHeight;
+
+      const bodyXPosition = (mergedWidth - bodyImage.width) / 2 + left;
+      const bodyYPosition = top;
+
+      ctx.drawImage(bodyImage, bodyXPosition-160, bodyYPosition + 75, 500, 350);
+      ctx.drawImage(commonImage, 10, 10, 250, 170);
+
+      const mergedImageUrl = canvas.toDataURL('image/png', 1);
+      setMergedImage(mergedImageUrl);
+    };
+
+    if (commonImageSrc) {
+      if (selectedImage) {
+        mergeImages(commonImageSrc, selectedImage, topPosition, bodyLeftPosition);
+      } else {
+        
+        setMergedImage(null);
+      }
+    }
+  }, [commonImageSrc, selectedImage, topPosition, bodyLeftPosition]);
 
   const handleCommonImageChange = (e) => {
     const file = e.target.files[0];
@@ -38,7 +110,10 @@ export default function App() {
       reader.readAsDataURL(file);
     }
   };
-  
+
+  const handleCarouselImageChange = (slide) => {
+    setSelectedImage(slide);
+  };
 
   const incrementTopPosition = () => {
     setTopPosition(topPosition + 1);
@@ -60,52 +135,6 @@ export default function App() {
     }
   };
 
-  useEffect(() => {
-    const mergeImages = async () => {
-      if (commonImageSrc && selectedImage) {
-        const commonImage = new Image();
-        commonImage.src = commonImageSrc;
-
-       
-
-        await commonImage.decode();
-        
-
-        const commonImageWidth = Math.floor(commonImage.width);
-        const commonImageHeight = Math.floor(commonImage.height);
-
-        const bodyImage = new Image();
-        bodyImage.src = selectedImage;
-
-        await bodyImage.decode();
-
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = false;
-
-        const mergedWidth = Math.max(commonImageWidth, bodyImage.width);
-        const mergedHeight = Math.floor(commonImageHeight + bodyImage.height + 300);
-        canvas.width = mergedWidth;
-        canvas.height = mergedHeight;
-
-        const bodyXPosition = (mergedWidth - bodyImage.width) / 2 + bodyLeftPosition;
-        const bodyYPosition = topPosition;
-
-        ctx.drawImage(bodyImage, bodyXPosition, bodyYPosition + 75, 100, 130);
-        ctx.drawImage(commonImage, 80, 10, 130, 80); 
-        
-
-        const mergedImageUrl = canvas.toDataURL('image/png', 1);
-        setMergedImage(mergedImageUrl);
-      }
-    };
-
-    mergeImages();
-  }, [commonImageSrc, selectedImage, topPosition, bodyLeftPosition]);
-
-  
-  
-    
   const resizeImage = (imageUrl, maxWidth, maxHeight, callback) => {
     const img = new Image();
     img.src = imageUrl;
@@ -118,11 +147,9 @@ export default function App() {
       canvas.width = width;
       canvas.height = height;
 
-      
-
       const ctx = canvas.getContext('2d');
       ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, width, height);
 
       ctx.drawImage(img, 0, 0, width, height);
 
@@ -130,10 +157,6 @@ export default function App() {
       callback(resizedImageUrl);
     };
   };
-      
-
-      
-
 
   const convertToCartoon = async () => {
     if (selectedImage) {
@@ -178,9 +201,9 @@ export default function App() {
         const offsetY = (targetHeight - image.height) / 2;
 
         ctx.fillStyle = 'white';
-        ctx.fillRect(-10, 140, canvas.width - 70, canvas.height - 280);
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        ctx.drawImage(image, offsetX - 100, offsetY + 100, image.width + 140, image.height + 680);
+        ctx.drawImage(image, offsetX, offsetY);
 
         canvas.toBlob((blob) => {
           const blobUrl = URL.createObjectURL(blob);
@@ -194,149 +217,242 @@ export default function App() {
     }
   };
 
+  const toggleSlides1 = () => {
+    setCurrentSlides(slides1);
+    setShowSlides2(true);
+    setShowCarousel(true);
+    setShowSlides3(false);
+  };
+
+  const toggleSlides2 = () => {
+    setCurrentSlides(slides2);
+    setShowSlides2(true); 
+    setShowCarousel(true); 
+    setShowSlides3(false); 
+  };
+
+  const toggleSlides3 = () => {
+    setCurrentSlides(slides3);
+    setShowSlides3(false); 
+    setShowCarousel(true); 
+    setShowSlides2(false); 
+  };
+
+  
   return (
-    <div style={{height:'100px'}}>
-    <div className="container mt-5" style={{ backgroundColor: '#f0f0f0' }}>
-    <div className="container mt-5">
-      <div className="row">
-        <div className="col-md-6">
-          <div className="form-group">
-            <label htmlFor="headImageInput" className="btn btn-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-upload" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
-              </svg>
-              Browse
-              <input
-                type="file"
-                id="headImageInput"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleCommonImageChange}
-              />
-            </label>
-          </div>
-          {commonImageSrc ? (
-            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '1px dashed #ccc' }}>
-              <img src={commonImageSrc} alt="Head" className="img-fluid" style={{ maxWidth: '100%' }} />
+    <body style={{  margin: '0', padding: '0', height: '60px' }}>
+      <div style={{ backgroundColor: '#f0f0f0',height: '500px' }}>
+        <div className="container mt-5" style={{ marginTop: '20px' }}>
+          <div className="row">
+            <div className="col-md-6">
+              <div className="form-group">
+                <label
+                  htmlFor="headImageInput"
+                  style={{ position: 'absolute', top: '50px', left: '160px', transform: 'translateX(-50%)' }}
+                  className="btn btn-primary"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
+  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+</svg>
+                  Browse
+                  <input
+                    type="file"
+                    id="headImageInput"
+                    accept="image/*"
+                    style={{ display: 'none', position: 'absolute', top: '0', left: '0' }}
+                    onChange={handleCommonImageChange}
+                  />
+                </label>
+              </div>
+
+              {commonImageSrc ? (
+                <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '2px dashed #ccc',marginLeft: '50px',position: 'absolute',top: '100px' }}>
+                  <img src={commonImageSrc} alt="Head" className="img-fluid" style={{ maxWidth: '100%' }} />
+                </div>
+              ) : (
+                <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '2px dashed #ccc',marginLeft: '50px',position: 'absolute',top: '100px' }}>
+                  <div className="text-center">Upload a head image</div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '1px dashed #ccc' }}>
-              <div className="text-center">Upload a head image</div>
+
+            <div style={{ marginTop: '50px' }}>
+              <div style={{ marginLeft: '540px', marginTop: '10px', position: 'absolute' }} className="col-md-3">
+                <div className="form-group">
+                  {showCarousel ? (
+                    <Carousel>
+                      {currentSlides.map((slide, index) => (
+                        <Carousel.Item key={index}>
+                          <img
+                            src={slide}
+                            alt={`Body ${index}`}
+                            className="img-fluid"
+                            style={{ maxWidth: '100%', maxHeight: '100%', cursor: 'pointer',marginLeft:'90px' }}
+                            onClick={() => handleCarouselImageChange(slide)}
+                          />
+                        </Carousel.Item>
+                      ))}
+                    </Carousel>
+                  ) : null }
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-
-        <div style={{ marginLeft: '300px', marginTop: '-250px' }} className="col-md-6">
-          <div className="form-group">
-            <label htmlFor="bodyImageInput" className="btn btn-primary">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-upload" viewBox="0 0 16 16">
-                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
-                <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
-              </svg>
-              Browse
-              <input
-                type="file"
-                id="bodyImageInput"
-                accept="image/*"
-                style={{ display: 'none' }}
-                onChange={handleBodyImageChange}
-              />
-            </label>
           </div>
-          {selectedImage ? (
-  <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '1px dashed #ccc' }}>
-    <img
-      src={selectedImage}
-      alt="Body"
-      className="img-fluid"
-      style={{ maxWidth: '100%', maxHeight: '100%' }}
-    />
-  </div>
-) : (
-  <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '1px dashed #ccc' }}>
-    <div className="text-center">Upload a body image</div>
-  </div>
-)}
 
-        </div>
-      </div>
-
-      <div className="row mt-5">
-        <div className="col-md-12">
-          <div className="rounded p-3 d-flex justify-content-center align-items-center flex-column" style={{ height: '300px', width: '300px', marginLeft: '700px', marginTop: '-250px',border: '4px dashed #ccc'  }}>
-            {mergedImage && (
-              <div>
+          <div style={{ marginLeft: '300px', marginTop: '-50px' ,position:'absolute' }} className="col-md-6">
+            <div className="form-group">
+              <label htmlFor="bodyImageInput" className="btn btn-primary">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
+  <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+  <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+</svg>
+                Browse
+                <input
+                  type="file"
+                  id="bodyImageInput"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={handleBodyImageChange}
+                />
+              </label>
+            </div>
+            {selectedImage ? (
+              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '2px dashed #ccc',position: 'absolute',top: '50px'  }}>
                 <img
-                  src={mergedImage}
-                  alt="Merged"
+                  src={selectedImage}
+                  alt="Body"
                   className="img-fluid"
-                  style={{ maxWidth: '80%', maxHeight: '80%', marginTop: '290px' ,marginLeft:'40px'}}
+                  style={{ maxWidth: '100%', maxHeight: '100%' }}
                 />
               </div>
+            ) : (
+              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '2px dashed #ccc',position: 'absolute',top: '50px'  }}>
+                <div className="text-center">Upload a body image</div>
+              </div>
             )}
-            <div style={{marginTop:'-350px',marginLeft:'-140px',position:'absolute'}}>Adjust Positioning:</div>
-            <div style={{position:'absolute'}} className="mt-3">
-            
-              <div style={{ marginTop: '-200px', position: 'absolute' }} className="d-flex">
-                <div style={{ marginLeft: '10px' }} className="mr-2">
-                
-                  <button  onClick={decrementBodyLeftPosition}>
+          </div>
 
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0l-2.146 2.147H11.5z"/>
+          <div style={{ marginTop: '-100px' }}>
+            <div className="row mt-5">
+              <div className="col-md-12">
+                <div
+                  className="rounded p-3 d-flex justify-content-center align-items-center flex-column"
+                  style={{
+                    height: '300px',
+                    width: '300px',
+                    marginLeft: '860px',
+                    marginTop: '-170px',
+                    border: '4px dashed #ccc',
+                    position: 'absolute',
+                    top:'250px'
+                  }}
+                >
+                  {mergedImage && (
+                    <div>
+                      <img
+                        src={mergedImage}
+                        alt="Merged"
+                        className="img-fluid"
+                        style={{
+                          maxWidth: '80%',
+                          maxHeight: '80%',
+                          marginTop: '-110px',
+                          marginLeft: '-50px',
+                          position: 'absolute',
+                          
+                        }}
+                      />
+                    </div>
+                  )}
+                  <div style={{ marginTop: '-350px', marginLeft: '-140px', position: 'absolute' }}>Adjust Positioning:</div>
+                  <div style={{ position: 'absolute' }} className="mt-3">
+                    <div style={{ position: 'absolute', marginTop: '-185px' }} className="d-flex">
+                      <div style={{ marginLeft: '10px', marginTop: '-8px', position: 'absolute' }} className="mr-2">
+                        <button onClick={decrementBodyLeftPosition}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-left-circle-fill" viewBox="0 0 16 16">
+                            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708.708L5.707 7.5H11.5z" />
+                          </svg>
+                        </button>
+                      </div>
+                      <div style={{ marginTop: '-8px', marginLeft: '40px', position: 'absolute' }}>
+                        <button onClick={incrementBodyLeftPosition}>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
+                            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm-3.5 7.5a.5.5 0 0 1 0-1H10.293l-2.147-2.146a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 1 1-.708-.708L10.293 7.5H4.5z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: '-194px', marginLeft: '70px', position: 'absolute' }}>
+                      <button onClick={decrementTopPosition}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+  <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707V11.5z"/>
 </svg>
-                  </button>
-                </div>
-                <div className="mr-2">
-                  <button  onClick={incrementTopPosition}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
+                      </button>
+                    </div>
+                    <div style={{ marginTop: '-194px', marginLeft: '100px', position: 'absolute' }}>
+                      <button onClick={incrementTopPosition}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-circle-fill" viewBox="0 0 16 16">
   <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
 </svg>
-                  </button>
-                </div>
-                <div className="ml-2">
-                  <button  onClick={decrementTopPosition}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-  <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0zm-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 0-.708l-3-3a.5.5 0 1 1-.708.708L10.293 7.5H4.5z"/>
-</svg>
-                  </button>
-                </div>
-                <div className="ml-2">
-                  <button  onClick={incrementBodyLeftPosition}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right-circle-fill" viewBox="0 0 16 16">
-  <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L10.293 7.5H4.5z"/>
-</svg>
-                  </button>
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div style={{marginLeft:'600px'}} className="text-center mt-3">
-            <div style={{marginTop:'50px'}}> 
-            <button
-              onClick={downloadMergedImage}
-              className="btn btn-success"
-            >
-              Download
-            </button>
-            </div>
-          </div>
-          <h4 className="mt-3" style={{ top: '200px' }}>Convert to Cartoon</h4>
-          <div className="text-center">
-            <button onClick={convertToCartoon} className="btn btn-primary">
-              Convert to Cartoon
-            </button>
-          </div>
-          {cartoonImage && (
-            <div className="border p-3 mt-3">
-              <img src={cartoonImage} alt="Cartoon" className="img-fluid" style={{ maxWidth: '100%' }} />
-            </div>
-          )}
         </div>
       </div>
-    </div>
-    </div>
-    </div>
+
+      <div style={{ marginLeft: '100px', marginTop: '-100px', position: 'absolute' }}>
+        <button
+          onClick={convertToCartoon}
+          style={{ marginRight: '20px' }}
+          className="btn btn-primary"
+        >
+          Convert to Cartoon
+        </button>
+        <button style={{ marginLeft: '740px', marginTop: '-60px', position: 'absolute' }}onClick={downloadMergedImage} className="btn btn-success">
+          Download
+        </button>
+      </div>
+
+      <div className="mt-5" style={{ marginLeft: '600px', marginTop: '-30px', position: 'absolute' }}>
+        <div>
+          <button
+            className={`btn ${showSlides1 ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={toggleSlides1}
+            style={{ marginRight: '20px',marginTop:'-1090px' }}
+          >
+            Slides 1
+          </button>
+          <button
+            className={`btn ${showSlides2 ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={toggleSlides2}
+            style={{ marginRight: '20px',marginTop:'-1090px'}}
+          >
+            Slides 2
+          </button>
+          <button
+            className={`btn ${showSlides3 ? 'btn-primary' : 'btn-outline-primary'}`}
+            onClick={toggleSlides3}
+            style={{ marginRight: '10px',marginTop:'-1090px' }}
+          >
+            Slides 3
+          </button>
+        </div>
+      </div>
+
+      <div
+       
+      >
+        {cartoonImage ? (
+          <img src={cartoonImage} alt="Cartoon" className="img-fluid" style={{ maxWidth: '100%', maxHeight: '100%' }} />
+        ) : (
+          <div className="text-center"></div>
+        )}
+      </div>
+    </body>
   );
 }
