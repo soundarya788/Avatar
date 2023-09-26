@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import 'react-image-gallery/styles/css/image-gallery.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Carousel from 'react-bootstrap/Carousel';
@@ -7,7 +7,7 @@ import Carousel from 'react-bootstrap/Carousel';
 export default function App() {
   const [commonImageSrc, setCommonImageSrc] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
-  const [cartoonImage, setCartoonImage] = useState(null);
+  const [cartoonImage] = useState(null);
 
   const [topPosition, setTopPosition] = useState(0);
   const [bodyLeftPosition, setBodyLeftPosition] = useState(0);
@@ -69,7 +69,7 @@ export default function App() {
       const bodyYPosition = top;
 
       ctx.drawImage(bodyImage, bodyXPosition-160, bodyYPosition + 75, 500, 350);
-      ctx.drawImage(commonImage, 10, 10, 250, 170);
+      ctx.drawImage(commonImage, 30, 10, 250, 170);
 
       const mergedImageUrl = canvas.toDataURL('image/png', 1);
       setMergedImage(mergedImageUrl);
@@ -158,26 +158,7 @@ export default function App() {
     };
   };
 
-  const convertToCartoon = async () => {
-    if (selectedImage) {
-      try {
-        const formData = new FormData();
-        formData.append('image', selectedImage);
-
-        const response = await axios.post('https://api.gyanibooks.com/library/get_dummy_notes/', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        const cartoonImageUrl = response.data.cartoonImageUrl;
-        setCartoonImage(cartoonImageUrl);
-      } catch (error) {
-        console.error('Error converting image to cartoon:', error);
-      }
-    }
-  };
-
+  
   const downloadMergedImage = (event) => {
     event.preventDefault();
     if (mergedImage) {
@@ -240,22 +221,24 @@ export default function App() {
 
   
   return (
-    <body style={{  margin: '0', padding: '0', height: '60px' }}>
-      <div style={{ backgroundColor: '#f0f0f0',height: '500px' }}>
+    
+    <body style={{  margin: '0', padding: '0', height: '80px' }}>
+      
+      <div style={{ backgroundColor: '#192a56',height: '550px',transform: 'scale(0.9)' }}>
         <div className="container mt-5" style={{ marginTop: '20px' }}>
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
                 <label
                   htmlFor="headImageInput"
-                  style={{ position: 'absolute', top: '50px', left: '200px', transform: 'translateX(-50%)' }}
-                  className="btn btn-primary"
+                  style={{ position: 'absolute', top: '10px', left: '80px', transform: 'translateX(-50%)', backgroundColor: '#ff3f34'  }}
+                  className="btn btn-primary" 
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
   <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
   <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
 </svg>
-                  Browse
+                  Upload
                   <input
                     type="file"
                     id="headImageInput"
@@ -267,21 +250,23 @@ export default function App() {
               </div>
 
               {commonImageSrc ? (
-                <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '2px dashed #ccc',marginLeft: '50px',position: 'absolute',top: '100px' }}>
+                <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '5px dashed #ccc',marginLeft: '-30px',position: 'absolute',top: '40px',backgroundColor:'black' }}>
                   <img src={commonImageSrc} alt="Head" className="img-fluid" style={{ maxWidth: '100%' }} />
                 </div>
               ) : (
-                <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '2px dashed #ccc',marginLeft: '50px',position: 'absolute',top: '100px' }}>
-                  <div className="text-center">Upload a head image</div>
+                <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '5px dashed #ccc',marginLeft: '-30px',position: 'absolute',top: '40px' ,backgroundColor:'black'}}>
+                  <div className="text-center" style={{backgroundColor:'white'}}>Upload a head image</div>
                 </div>
               )}
             </div>
 
             <div style={{ marginTop: '50px' }}>
-              <div style={{ marginLeft: '540px', marginTop: '10px', position: 'absolute' }} className="col-md-3">
-                <div className="form-group">
+               
+              <div style={{ marginLeft: '280px', marginTop: '30px', position: 'absolute',backgroundColor:'black' }} className="col-md-3">
+                <div  >
+                <div className="form-group" >
                   {showCarousel ? (
-                    <Carousel>
+                    <Carousel style={{border: '5px dashed #ccc',height:'160px'}}>
                       {currentSlides.map((slide, index) => (
                         <Carousel.Item key={index}>
                           <img
@@ -297,17 +282,18 @@ export default function App() {
                   ) : null }
                 </div>
               </div>
+              </div>
             </div>
           </div>
 
-          <div style={{ marginLeft: '300px', marginTop: '-50px' ,position:'absolute' }} className="col-md-6">
+          <div style={{ marginLeft: '-30px', marginTop: '230px' ,position:'absolute' }} className="col-md-6">
             <div className="form-group">
-              <label htmlFor="bodyImageInput" className="btn btn-primary">
+              <label htmlFor="bodyImageInput" className="btn btn-primary" style={{backgroundColor: '#ff3f34'}}>
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
   <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
   <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
 </svg>
-                Browse
+                Upload
                 <input
                   type="file"
                   id="bodyImageInput"
@@ -318,7 +304,7 @@ export default function App() {
               </label>
             </div>
             {selectedImage ? (
-              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '2px dashed #ccc',position: 'absolute',top: '50px'  }}>
+              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', overflow: 'hidden', border: '5px dashed #ccc',position: 'absolute',top: '30px' ,backgroundColor:'black' }}>
                 <img
                   src={selectedImage}
                   alt="Body"
@@ -327,8 +313,8 @@ export default function App() {
                 />
               </div>
             ) : (
-              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: '2px dashed #ccc',position: 'absolute',top: '50px'  }}>
-                <div className="text-center">Upload a body image</div>
+              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: ' 5px dashed #ccc',position: 'absolute',top: '30px' ,backgroundColor:'black' }}>
+                <div className="text-center" style={{backgroundColor:'white'}}>Upload a body image</div>
               </div>
             )}
           </div>
@@ -341,11 +327,13 @@ export default function App() {
                   style={{
                     height: '300px',
                     width: '300px',
-                    marginLeft: '860px',
-                    marginTop: '-170px',
-                    border: '4px dashed #ccc',
+                    marginLeft: '760px',
+                    marginTop: '-230px',
+                    border: '8px dashed #ccc',
+                    
                     position: 'absolute',
-                    top:'250px'
+                    top:'270px',
+                    background:'white',
                   }}
                 >
                   {mergedImage && (
@@ -360,12 +348,14 @@ export default function App() {
                           marginTop: '-110px',
                           marginLeft: '-50px',
                           position: 'absolute',
+                          backgroundColor:'white',
+                          color:'white',
                           
                         }}
                       />
                     </div>
                   )}
-                  <div style={{ marginTop: '-350px', marginLeft: '-140px', position: 'absolute' }}>Adjust Positioning:</div>
+                  <div style={{ marginTop: '-338px', marginLeft: '-140px', position: 'absolute',backgroundColor:'white' }}>Adjust Positioning:</div>
                   <div style={{ position: 'absolute' }} className="mt-3">
                     <div style={{ position: 'absolute', marginTop: '-185px' }} className="d-flex">
                       <div style={{ marginLeft: '10px', marginTop: '-8px', position: 'absolute' }} className="mr-2">
@@ -406,38 +396,32 @@ export default function App() {
       </div>
 
       <div style={{ marginLeft: '100px', marginTop: '-100px', position: 'absolute' }}>
-        <button
-          onClick={convertToCartoon}
-          style={{ marginRight: '20px' }}
-          className="btn btn-primary"
-        >
-          Convert to Cartoon
-        </button>
-        <button style={{ marginLeft: '740px', marginTop: '-60px', position: 'absolute' }}onClick={downloadMergedImage} className="btn btn-success">
+       
+        <button style={{ marginLeft: '780px', marginTop: '-90px', position: 'absolute',backgroundColor:'#05c46b' }}onClick={downloadMergedImage} className="btn btn-success">
           Download
         </button>
       </div>
 
-      <div className="mt-5" style={{ marginLeft: '630px', marginTop: '-30px', position: 'absolute' }}>
+      <div className="mt-5" style={{ marginLeft: '360px', marginTop: '-20px', position: 'absolute' }}>
         <div>
           <button
             className={`btn ${showSlides1 ? 'btn-primary' : 'btn-outline-primary'}`}
             onClick={toggleSlides1}
-            style={{ marginRight: '20px',marginTop:'-1090px' }}
+            style={{ marginRight: '20px',marginTop:'-1120px',backgroundColor:'#ff3f34' }}
           >
             Slides 1
           </button>
           <button
             className={`btn ${showSlides2 ? 'btn-primary' : 'btn-outline-primary'}`}
             onClick={toggleSlides2}
-            style={{ marginRight: '20px',marginTop:'-1090px'}}
+            style={{ marginRight: '20px',marginTop:'-1120px',backgroundColor:'#ff3f34'}}
           >
             Slides 2
           </button>
           <button
             className={`btn ${showSlides3 ? 'btn-primary' : 'btn-outline-primary'}`}
             onClick={toggleSlides3}
-            style={{ marginRight: '10px',marginTop:'-1090px' }}
+            style={{ marginRight: '10px',marginTop:'-1120px', backgroundColor:'#ff3f34' }}
           >
             Slides 3
           </button>
