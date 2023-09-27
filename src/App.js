@@ -231,7 +231,7 @@ export default function App() {
               <div className="form-group">
                 <label
                   htmlFor="headImageInput"
-                  style={{ position: 'absolute', top: '10px', left: '80px', transform: 'translateX(-50%)', backgroundColor: '#ff3f34'  }}
+                  style={{ position: 'absolute', top: '10px', left: '130px', transform: 'translateX(-50%)', backgroundColor: '#ff3f34'  }}
                   className="btn btn-primary" 
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
@@ -397,12 +397,12 @@ export default function App() {
 
       <div style={{ marginLeft: '100px', marginTop: '-100px', position: 'absolute' }}>
        
-        <button style={{ marginLeft: '780px', marginTop: '-90px', position: 'absolute',backgroundColor:'#05c46b' }}onClick={downloadMergedImage} className="btn btn-success">
+        <button style={{ marginLeft: '860px', marginTop: '-90px', position: 'absolute',backgroundColor:'#05c46b' }}onClick={downloadMergedImage} className="btn btn-success">
           Download
         </button>
       </div>
 
-      <div className="mt-5" style={{ marginLeft: '360px', marginTop: '-20px', position: 'absolute' }}>
+      <div className="mt-5" style={{ marginLeft: '420px', marginTop: '-20px', position: 'absolute' }}>
         <div>
           <button
             className={`btn ${showSlides1 ? 'btn-primary' : 'btn-outline-primary'}`}
@@ -436,6 +436,9 @@ export default function App() {
         ) : (
           <div className="text-center"></div>
         )}
+      </div>
+      <div  style={{marginTop:'-580px',marginLeft:'550px',position:'absolute',fontSize: '30px'}}>
+      DreamikAI
       </div>
     </body>
   );
