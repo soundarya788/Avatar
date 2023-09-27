@@ -231,7 +231,7 @@ export default function App() {
               <div className="form-group">
                 <label
                   htmlFor="headImageInput"
-                  style={{ position: 'absolute', top: '10px', left: '135px', transform: 'translateX(-50%)', backgroundColor: '#ff3f34'  }}
+                  style={{ position: 'absolute', top: '10px', left: '133px', transform: 'translateX(-50%)', backgroundColor: '#ff3f34'  }}
                   className="btn btn-primary" 
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
