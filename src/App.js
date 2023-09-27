@@ -188,6 +188,7 @@ export default function App() {
 
         canvas.toBlob((blob) => {
           const blobUrl = URL.createObjectURL(blob);
+        
           link.href = blobUrl;
           link.download = 'merged-image-1080.png';
           link.click();
@@ -313,7 +314,7 @@ export default function App() {
                 />
               </div>
             ) : (
-              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: ' 5px dashed #ccc',position: 'absolute',top: '30px' ,backgroundColor:'black' }}>
+              <div className="p-3 mt-3" style={{ width: '200px', height: '200px', border: ' 5px dashed#ccc',position: 'absolute',top: '30px' ,backgroundColor:'black' }}>
                 <div className="text-center" style={{backgroundColor:'white'}}>Upload a body image</div>
               </div>
             )}
@@ -333,7 +334,7 @@ export default function App() {
                     
                     position: 'absolute',
                     top:'270px',
-                    background:'white',
+                    backgroundColor:'white',
                   }}
                 >
                   {mergedImage && (
@@ -350,6 +351,7 @@ export default function App() {
                           position: 'absolute',
                           backgroundColor:'white',
                           color:'white',
+                          transform:'scale(1.2)',
                           
                         }}
                       />
