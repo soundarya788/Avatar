@@ -1,31 +1,226 @@
-/* App.css */
-
-/* ... (your existing styles) */
-
-.skill-bar {
-  margin-bottom: 20px;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.skill-name {
-  font-weight: bold;
-  margin-bottom: 5px;
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
 }
 
-.bar-container {
-  width: 100%;
-  background-color: #ddd;
-  height: 16px; /* Reduce the height of the bar container */
-  border-radius: 5px;
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+ 
+}
+
+.center1{
+  
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+ 
+  width:100px;
+  height: 30px;
+  transform: scale(2,5);
+  
+
+  
+}
+.center2{
+  
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+ 
+  width:100px;
+  height: 30px;
+  transform: scale(2,9);
+
+  
+}
+.center4{
+  
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  
+  
+ }
+
+ .download-button {
+  padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.download-button:hover {
+  background-color: #45a049;
+  
+}
+
+.download-button-container {
+  display: flex;
+  justify-content: center;
+  text-align: end;
+  
+  
+}
+.merged-image-container {
+  position: relative;
+  text-align: right;
+}
+
+
+
+
+
+.download-button-wrapper {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  
+}
+
+.image-gallery-image:nth-child(4) .carousel-image {
+  top: 200px; 
+}
+
+.image-gallery-container {
+  position: relative;
+}
+
+.merged-image-container {
+  position: absolute;
+  top: 800px;
+  right: 20px;
+}
+
+.merged-image {
+  width: 200px;
+}
+.image-gallery-container {
+  height: 500px;
+  left: -130px;
+}
+
+.image-gallery-container:nth-child(2) {
+  margin-top: 0; 
+  top: 0; 
+}
+.carousel-button {
+  background-color: #F44336; 
+  color: #FFFFFF; 
+  border: none; 
+  padding: 10px 20px; 
+  border-radius: 19px; 
+  font-size: 16px; 
+  
+}
+
+.carousel-button.active {
+  background-color: #4CAF50; 
+}
+
+.image-gallery-container {
+  position: relative;
+}
+
+.uploaded-image-container {
+  margin-right: '-100px';
+
+}
+
+.image-gallery-container {
+  height: 450px;
+  left: -130px;
+}
+
+.merged-image {
+  width: auto;
+  height: auto;
+  position: relative;
+}
+
+.download-button {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  align-items: center;
+  right: -100px;
+}
+
+.file-input {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  z-index: 1;
+}
+
+.image-container {
+  position: relative;
+  top: -70px;
+  left: -450px;
+  margin-right: -500px;
+}
+.carousel-image-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 
-.bar {
-  height: 100%;
-  line-height: 1px; /* Reduce the line-height to match the height */
-  text-align: center;
-  color: white;
-  background-color: #04AA6D; /* Bar color */
-  transition: width 0.1s;
+
+.image-gallery-container {
+  
+  margin: 20px;
+  padding: 20px;
 }
 
 
+.image-gallery-image {
+
+  top: 0;
+  left: 0;
+}
+
+.custom-file-input {
+  
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  
+}
+.merged{
+  border: '2px solid black';
+}
+.App {
+  max-width: 202px;
+  margin: 0 auto;
+}
+@media (max-width: 768px) {
+  /* CSS styles for small screens */
+}
+
+@media (min-width: 768px) and (max-width: 992px) {
+  /* CSS styles for medium screens */
+}
+
+@media (min-width: 992px) {
+  /* CSS styles for large screens */
+}
